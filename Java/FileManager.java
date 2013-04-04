@@ -1,7 +1,7 @@
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.util.regex.*;
+import java.util.*;
 
 public class FileManager {
 	BufferedReader readerIn;
