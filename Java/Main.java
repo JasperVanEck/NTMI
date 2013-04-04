@@ -9,8 +9,10 @@ public class Main{
 
 	public static void main(String[] args){
 		
-		String fileName = "austen.txt";
+		Scanner sc = new Scanner(System.in);
+		String fileName = "test_sentences.txt";
 		int n = 2;
+		int m = 10;
 
 		for(int i = 0; i < args.length; i = i + 2)
 		{
@@ -22,9 +24,16 @@ public class Main{
 					n = Integer.parseInt(args[i + 1]);
 				}catch(Exception e){
 					System.out.printf("Dat was geen integer ja. Kies een integer...\n");
-					Scanner sc = new Scanner(System.in);
 					n = sc.nextInt();
 				};
+			}
+			if(args[i].equals("-m")){
+				try{
+					m = Integer.parseInt(args[i + 1]);
+				}catch(Exception e){
+					System.out.printf("Dat was geen integer ja. Kies een integer...\n");
+					m = sc.nextInt();
+				}
 			}
 		}
 
