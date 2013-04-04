@@ -11,6 +11,7 @@ public class Main{
 		
 		String fileName = "austen.txt";
 		int n = 2;
+/*
 		for(int i = 0; i < 4; i = i + 2)
 		{
 			if(args[i].equals("-f")){
@@ -26,7 +27,8 @@ public class Main{
 				}
 			}
 		}
+*/
 		System.out.printf("N: %d \nFilename: %s", n, fileName);
-		//NGram nGram = new NGram(n, fileName);
+//		NGram nGram = new NGram(n, fileName);
 	}
 }
