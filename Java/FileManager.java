@@ -12,6 +12,9 @@ public class FileManager {
 	
 	public FileManager(String fileIn) {
 		this.fileIn = fileIn;
+		//System.out.println(this.fileIn);
+		
+		//this.fileIn = fileIn;
 		try {
 			readerIn = new BufferedReader(new FileReader(fileIn),2);
 		} catch (Throwable e) {
@@ -22,10 +25,13 @@ public class FileManager {
 	
 	public FileManager(String fileIn, String fileOut) {
 		this.fileIn = fileIn;
+		//System.out.println(this.fileIn);
+		
+		//this.fileIn = fileIn;
 		this.fileOut = fileOut;
 		try {
-			readerIn = new BufferedReader(new FileReader(fileIn),2);
-			writerOut = new FileWriter(fileOut);
+			readerIn = new BufferedReader(new FileReader(this.fileIn),2);
+			writerOut = new FileWriter(this.fileOut);
 		} catch (Throwable e) {
 			System.err.println("There was an error opening the file...");
 			System.exit(1);
