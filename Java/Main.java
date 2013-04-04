@@ -19,12 +19,12 @@ public class Main{
 			}
 			if(args[i].equals("-n")){
 				try{
-                                	n = Integer.parseInt(args[i + 1]);
-                        	}catch(Exception e){
-                                       	System.out.printf("Dat was geen integer ja. Kies een integer...\n");
-                                       	Scanner sc = new Scanner(System.in);
-                                       	n = sc.nextInt();
-                                };
+					n = Integer.parseInt(args[i + 1]);
+				}catch(Exception e){
+					System.out.printf("Dat was geen integer ja. Kies een integer...\n");
+					Scanner sc = new Scanner(System.in);
+					n = sc.nextInt();
+				};
 			}
 		}
 
