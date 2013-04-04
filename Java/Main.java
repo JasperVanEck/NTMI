@@ -28,7 +28,7 @@ public class Main{
 			}
 		}
 
-		System.out.printf("N: %d \nFilename: %s", n, fileName);
+		System.out.printf("N: %d \nFilename: %s\n", n, fileName);
 //		NGram nGram = new NGram(n, fileName);
 	}
 }
