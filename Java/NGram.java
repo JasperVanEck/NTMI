@@ -22,7 +22,7 @@ public class NGram{
 				
 		this.manager = new FileManager(inputFile, outputFile);
 		
-		computeNGrams();
+		computeNGrams2();
 		
 		sortMap(map);
 	}
@@ -49,13 +49,50 @@ public class NGram{
 		String[] words = splitPoint.split(text);
 		
 		int lineSize = words.length - (nGramSize);
-			
+		
 		for(int i=0; i < lineSize; i++){
 			nGram = words[i];
 			for(int j=1; j < nGramSize; j++){
 				nGram = nGram + " " + words[i+j];
 			}
 			addToMap(nGram);
+		}
+
+	}
+	
+	public void computeNGrams2(){
+		Pattern splitPoint = Pattern.compile(" ");
+		String[nGramSize - 1] pastWords;
+		String nextLine = manager.readNextLine();
+		String nGram = "";
+		
+		
+		while(nextLine != null){
+		
+			String[] currentWords = splitPoint.split(nextLine);
+			int lineSize = words.length - (nGramSize);
+			
+			String[] words;
+			
+			if(pastWords != null){
+				words = ArrayUtils.addAll(pastWords, currentWords);
+			}else{
+				words = currentWords;
+			}
+			
+			System.out.println(words);
+			
+			int i =0;
+			for(i; i < lineSize; i++){
+				nGram = words[i];
+				for(int j=1; j < nGramSize; j++){
+					nGram = nGram + " " + words[i+j];
+				}
+				addToMap(nGram);
+			}
+			for (int ii=1; i < nGramSize -1; i++){
+				pastWords[ii - 1] = words[i + ii];
+			}
 		}
 
 	}
