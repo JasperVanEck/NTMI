@@ -11,6 +11,9 @@ public class NGram{
 	FileManager manager;
 	int nGramSize;
 
+	/*
+	Constructor voor nGram, specificeer welke corpus gebruikt wordt en welke orde n-grams berekend worden.
+	*/
 	public NGram(String inputFile, int n) {
 		nGramSize = n;
 		
@@ -23,39 +26,46 @@ public class NGram{
 		
 		sortMap(map);
 		
+		
 
 	}
 	
+	/*
+	Overloaded constructor, voor het specificeren hoeveel van de meest voorkomende nGrams geprint moeten worden.
+	*/
 	public NGram(String inputFile, int n, int m){
 		
 		this(inputFile, n);
 		printTopFrequencies(m);
 	}
 	
+	/*
+	computeNGrams krijgt van de manager één string met alle tekst. Deze wordt woord voor woord afgelopen, grams van gewenst formaat gemaakt en in de hashmap opgeslagen.
+	*/
 	public void computeNGrams(){
 		Pattern splitPoint = Pattern.compile(" ");
 		
-		String nextLine = manager.readNextLine();
+		String text = manager.readWholeFile();
 		String nGram = "";
 		
-		String[] words;
+		String[] words = splitPoint.split(text);
 		
-		while(nextLine != null){
-			words = splitPoint.split(nextLine);
-			int lineSize = words.length - (nGramSize-1);
+		int lineSize = words.length - (nGramSize);
 			
-			for(int i=0; i < lineSize; i++){
-				nGram = words[i];
-				for(int j=1; j < nGramSize; j++){
-					nGram = nGram + " " + words[i+j];
-				}
-				addToMap(nGram);
-				//System.out.println(nGram);
+		for(int i=0; i < lineSize; i++){
+			nGram = words[i];
+			for(int j=1; j < nGramSize; j++){
+				nGram = nGram + " " + words[i+j];
 			}
-			nextLine = manager.readNextLine();
+			addToMap(nGram);
+			System.out.println(nGram);
 		}
+
 	}
 	
+	/*
+	Voegt string nGram toe aan de HashMap, als deze al voorkomt wordt de value opgehoogd anders nieuw toegevoegd met frequency 1.
+	*/
 	public void addToMap(String nGram){
 		if(map.containsKey(nGram)){
 			int currentValue = map.get(nGram);
@@ -65,6 +75,9 @@ public class NGram{
 		}
 	}
 	
+	/*
+	Sorteert de hashMap map en zet deze in TreeMap sortedMap. 
+	*/
 	public void sortMap(HashMap<String, Integer> map){
 		
 		FrequencyComparator comparator = new FrequencyComparator(map);
@@ -73,6 +86,10 @@ public class NGram{
 	
 	}
 	
+	
+	/*
+	Print de m meest voorkomende NGrams uit.
+	*/
 	public void printTopFrequencies(int m){
 		int i=0;
 		Iterator entries = sortedMap.entrySet().iterator();
