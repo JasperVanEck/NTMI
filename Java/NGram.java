@@ -70,6 +70,9 @@ public class NGram{
 		while(nextLine != null){
 		
 			if (nextLine.matches(".*\\w.*")){
+				nextLine = nextLine.trim().replaceAll(" +"," ");
+				
+
 				String[] currentWords = splitPoint.split(nextLine);
 				
 				
@@ -104,7 +107,7 @@ public class NGram{
 					}
 					addToMap(nGram);
 					lastValueOfWords = i;
-					System.out.println(nGram);
+					//System.out.println(nGram);
 				}
 				for (int ii=0; ii < nGramSize -1; ii++){
 					lastValueOfWords++;
@@ -115,8 +118,8 @@ public class NGram{
 				}
 				nextLine = manager.readNextLine();
 				
-				System.out.println(Arrays.toString(words));
-				System.out.println(Arrays.toString(pastWords));
+				//System.out.println(Arrays.toString(words));
+				//System.out.println(Arrays.toString(pastWords));
 			}else{
 				nextLine = manager.readNextLine();
 			}
