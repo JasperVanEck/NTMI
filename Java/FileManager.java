@@ -44,7 +44,7 @@ public class FileManager {
 		while(currentLine != null) {
 			try {
 				currentLine = readerIn.readLine();
-				completeFileAsString += " " + currentLine;
+				completeFileAsString += currentLine + " ";
 			} catch (IOException e) {
 				System.err.println("There was an error reading from file " + fileIn);
 				return "";
