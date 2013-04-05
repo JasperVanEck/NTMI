@@ -40,7 +40,7 @@ public class NGram{
 	}
 	
 	/*
-	computeNGrams krijgt van de manager één string met alle tekst. Deze wordt woord voor woord afgelopen, grams van gewenst formaat gemaakt en in de hashmap opgeslagen.
+	computeNGrams krijgt van de manager een string met alle tekst. Deze wordt woord voor woord afgelopen, grams van gewenst formaat gemaakt en in de hashmap opgeslagen.
 	*/
 	public void computeNGrams(){
 		Pattern splitPoint = Pattern.compile(" ");
@@ -58,7 +58,6 @@ public class NGram{
 				nGram = nGram + " " + words[i+j];
 			}
 			addToMap(nGram);
-			System.out.println(nGram);
 		}
 
 	}
