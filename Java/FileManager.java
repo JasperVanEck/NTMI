@@ -40,9 +40,11 @@ public class FileManager {
 	
 	public String readWholeFile() {
 		String completeFileAsString = "";
-		while(readNextLine() != null) {
+		String currentLine = "";
+		while(currentLine != null) {
 			try {
-				completeFileAsString += readerIn.readLine();
+				currentLine = readerIn.readLine();
+				completeFileAsString += " " + currentLine;
 			} catch (IOException e) {
 				System.err.println("There was an error reading from file " + fileIn);
 				return "";
