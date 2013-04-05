@@ -58,7 +58,6 @@ public class NGram{
 				nGram = nGram + " " + words[i+j];
 			}
 			addToMap(nGram);
-			System.out.println(nGram);
 		}
 
 	}
