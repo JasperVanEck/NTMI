@@ -51,6 +51,7 @@ public class FileManager {
 			}
 		}
 		completeFileAsString = completeFileAsString.substring(0, completeFileAsString.length() - 1);
+		completeFileAsString = completeFileAsString.replace("   "," ").replace("  "," ");
 		return completeFileAsString;
 	}
 	

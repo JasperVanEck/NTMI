@@ -25,9 +25,6 @@ public class NGram{
 		computeNGrams();
 		
 		sortMap(map);
-		
-		
-
 	}
 	
 	/*
@@ -37,6 +34,8 @@ public class NGram{
 		
 		this(inputFile, n);
 		printTopFrequencies(m);
+		System.out.println(map);
+		printSumFrequencies();
 	}
 	
 	/*
@@ -99,6 +98,12 @@ public class NGram{
 		}
 	}
 		
-	
+	public void printSumFrequencies(){
+		Integer sum = 0;
+		for(Map.Entry<String, Integer> entry : sortedMap.entrySet()){
+			sum =+ entry.getValue();
+		}
+		System.out.println("Total of all frequencies: " + sum);
+	}	
 }
 
