@@ -69,53 +69,57 @@ public class NGram{
 		
 		while(nextLine != null){
 		
-			String[] currentWords = splitPoint.split(nextLine);
-			
-			
-			String[] words = new String[currentWords.length + pastWords.length];
-			
-			if(!firstRun){
-				int k = 0;
-				for(String elem: pastWords){
-					words[k] = elem;
-					k++;
-				}
-				for(String elem: currentWords){
-					words[k] = elem;
-					k++;
-				}
-			}else{
-				words = currentWords;
-				firstRun = false;
-			}
-			
-			int lineSize = words.length - (nGramSize);
-			
-			
-			int lastValueOfWords = 0;
-			
-			for(int i=0; i <= lineSize; i++){
-				nGram = words[i];
-				//System.out.println(words[i]);
-				for(int j=1; j < nGramSize; j++){
-					nGram = nGram + " " + words[i+j];
-					//System.out.println(words[i+j]);
-				}
-				addToMap(nGram);
-				lastValueOfWords = i;
-				System.out.println(nGram);
-			}
-			for (int ii=0; ii < nGramSize -1; ii++){
-				lastValueOfWords++;
-				//System.out.println(lastValueOfWords);
-				//System.out.println(words[lastValueOfWords]);
-				pastWords[ii] = words[lastValueOfWords];
+			if (nextLine.matches(".*\\w.*")){
+				String[] currentWords = splitPoint.split(nextLine);
 				
+				
+				String[] words = new String[currentWords.length + pastWords.length];
+				
+				if(!firstRun){
+					int k = 0;
+					for(String elem: pastWords){
+						words[k] = elem;
+						k++;
+					}
+					for(String elem: currentWords){
+						words[k] = elem;
+						k++;
+					}
+				}else{
+					words = currentWords;
+					firstRun = false;
+				}
+				
+				int lineSize = words.length - (nGramSize);
+				
+				
+				int lastValueOfWords = 0;
+				
+				for(int i=0; i <= lineSize; i++){
+					nGram = words[i];
+					//System.out.println(words[i]);
+					for(int j=1; j < nGramSize; j++){
+						nGram = nGram + " " + words[i+j];
+						//System.out.println(words[i+j]);
+					}
+					addToMap(nGram);
+					lastValueOfWords = i;
+					System.out.println(nGram);
+				}
+				for (int ii=0; ii < nGramSize -1; ii++){
+					lastValueOfWords++;
+					//System.out.println(lastValueOfWords);
+					//System.out.println(words[lastValueOfWords]);
+					pastWords[ii] = words[lastValueOfWords];
+					
+				}
+				nextLine = manager.readNextLine();
+				
+				System.out.println(Arrays.toString(words));
+				System.out.println(Arrays.toString(pastWords));
+			}else{
+				nextLine = manager.readNextLine();
 			}
-			nextLine = manager.readNextLine();
-			
-			System.out.println(Arrays.toString(words));
-			System.out.println(Arrays.toString(pastWords));
 		}
 
 	}
