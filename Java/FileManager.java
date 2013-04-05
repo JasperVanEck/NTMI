@@ -38,6 +38,19 @@ public class FileManager {
 		}	
 	}
 	
+	public String readWholeFile() {
+		String completeFileAsString = "";
+		while(readNextLine() != null) {
+			try {
+				completeFileAsString += readerIn.readLine();
+			} catch (IOException e) {
+				System.err.println("There was an error reading from file " + fileIn);
+				return "";
+			}
+		}
+		return completeFileAsString;
+	}
+	
 	public String readNextLine() {
 		try {
 			return readerIn.readLine();
