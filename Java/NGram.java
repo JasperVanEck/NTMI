@@ -62,37 +62,60 @@ public class NGram{
 	
 	public void computeNGrams2(){
 		Pattern splitPoint = Pattern.compile(" ");
-		String[nGramSize - 1] pastWords;
+		String[] pastWords = new String[nGramSize - 1];
 		String nextLine = manager.readNextLine();
 		String nGram = "";
-		
+		boolean firstRun = true;
 		
 		while(nextLine != null){
 		
 			String[] currentWords = splitPoint.split(nextLine);
-			int lineSize = words.length - (nGramSize);
 			
-			String[] words;
 			
-			if(pastWords != null){
-				words = ArrayUtils.addAll(pastWords, currentWords);
+			String[] words = new String[currentWords.length + pastWords.length];
+			
+			if(!firstRun){
+				int k = 0;
+				for(String elem: pastWords){
+					words[k] = elem;
+					k++;
+				}
+				for(String elem: currentWords){
+					words[k] = elem;
+					k++;
+				}
 			}else{
 				words = currentWords;
+				firstRun = false;
 			}
 			
-			System.out.println(words);
+			int lineSize = words.length - (nGramSize);
 			
-			int i =0;
-			for(i; i < lineSize; i++){
+			
+			int lastValueOfWords = 0;
+			
+			for(int i=0; i <= lineSize; i++){
 				nGram = words[i];
+				//System.out.println(words[i]);
 				for(int j=1; j < nGramSize; j++){
 					nGram = nGram + " " + words[i+j];
+					//System.out.println(words[i+j]);
 				}
 				addToMap(nGram);
+				lastValueOfWords = i;
+				System.out.println(nGram);
 			}
-			for (int ii=1; i < nGramSize -1; i++){
-				pastWords[ii - 1] = words[i + ii];
+			for (int ii=0; ii < nGramSize -1; ii++){
+				lastValueOfWords++;
+				//System.out.println(lastValueOfWords);
+				//System.out.println(words[lastValueOfWords]);
+				pastWords[ii] = words[lastValueOfWords];
+				
 			}
+			nextLine = manager.readNextLine();
+			
+			System.out.println(Arrays.toString(words));
+			System.out.println(Arrays.toString(pastWords));
 		}
 
 	}
