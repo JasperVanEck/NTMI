@@ -50,6 +50,7 @@ public class FileManager {
 				return "";
 			}
 		}
+		completeFileAsString = completeFileAsString.substring(0, completeFileAsString.length() - 1);
 		return completeFileAsString;
 	}
 	
