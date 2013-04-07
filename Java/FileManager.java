@@ -1,4 +1,5 @@
-/* The FileManager class allows us to read from a .txt file, so that we may use the text hidden within.
+/* Authors: Floris de Bruin(5772583), Gijs van Horn(10070370) en Jasper van Eck(6228194.)
+ * The FileManager class allows us to read from a .txt file, so that we may use the text hidden within.
  * It's also possible to write to a .txt file, so that we may later use the NGrams created.
  */
 

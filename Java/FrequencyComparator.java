@@ -1,4 +1,5 @@
-/* FrequencyComparator allows us to check if a certain entry in the HashMap is larger, 
+/* Floris de Bruin(5772583), Gijs van Horn(10070370) en Jasper van Eck(6228194)
+ * FrequencyComparator allows us to check if a certain entry in the HashMap is larger, 
  * than the other.
  */
 
