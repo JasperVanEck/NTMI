@@ -1,3 +1,7 @@
+/* Auteurs: Floris de Bruin(5772583), Gijs van Horn(10070370) en Jasper van Eck(6228194)
+ * NGram maakt allemaal N-Grams van een String en stopt deze in een HashMap. Waarna ze met
+ * een TreeMap gesorteerd kunnen worden, en tevens ook geprint.
+ */
 
 import java.util.*;
 import java.util.regex.*;
@@ -38,7 +42,8 @@ public class NGram{
 	}
 	
 	/*
-	computeNGrams krijgt van de manager een string met alle tekst. Deze wordt woord voor woord afgelopen, grams van gewenst formaat gemaakt en in de hashmap opgeslagen.
+	computeNGrams krijgt van de manager een string met alle tekst. Deze wordt woord voor woord afgelopen, 
+	grams van gewenst formaat gemaakt en in de hashmap opgeslagen.
 	*/
 	public void computeNGrams(){
 		Pattern splitPoint = Pattern.compile(" ");
@@ -60,6 +65,11 @@ public class NGram{
 
 	}
 	
+	/*
+	computeNGrams2 leest van de manager regel voor regel de gegeven file uit. De woorden die meerdere malen worden gebruikt, worden tijdelijk
+	opgeslagen. Hierdoor is het mogelijk om het bestand regel voor regel uit te lezen, in plaats van het hele bestand in 1 haal uit te lezen.
+	Verder werkt computeNGrams2 het zelfde als computeNGrams.
+	 */
 	public void computeNGrams2(){
 		Pattern splitPoint = Pattern.compile(" ");
 		String[] pastWords = new String[nGramSize - 1];
@@ -163,7 +173,10 @@ public class NGram{
 			i++;
 		}
 	}
-		
+	
+	/*
+	Print de totale som van alle frequenties.
+	*/
 	public void printSumFrequencies(){
 		Integer sum = 0;
 		for(Map.Entry<String, Integer> entry : sortedMap.entrySet()){
