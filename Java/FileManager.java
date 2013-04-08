@@ -8,12 +8,12 @@ import java.util.regex.*;
 import java.util.*;
 
 public class FileManager {
-	BufferedReader readerIn;
-	String fileIn;
-	FileWriter writerOut;
-	String fileOut;
-	int sizeIn;
-	String nextReadSentence;
+	private BufferedReader readerIn;
+	private String fileIn;
+	private FileWriter writerOut;
+	private String fileOut;
+	private int sizeIn;
+	private String nextReadSentence;
 	
 	//Default constructor, only creates a file reader.
 	public FileManager(String fileIn) {

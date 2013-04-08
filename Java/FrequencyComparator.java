@@ -7,7 +7,7 @@ import java.util.*;
 
 class FrequencyComparator implements Comparator<String> {
 
-	Map<String, Integer> base;
+	private Map<String, Integer> base;
 	//constructor
 	public FrequencyComparator(HashMap<String, Integer> base) {
 		this.base = base;

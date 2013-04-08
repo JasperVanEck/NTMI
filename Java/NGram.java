@@ -10,11 +10,11 @@ import java.io.*;
 
 public class NGram{
 	
-	HashMap<String, Integer> map = new HashMap<String, Integer>();
-	TreeMap<String, Integer> sortedMap;
-	FileManager manager;
-	int nGramSize;
-	int m;
+	private HashMap<String, Integer> map = new HashMap<String, Integer>();
+	private TreeMap<String, Integer> sortedMap;
+	private FileManager manager;
+	private int nGramSize;
+	private int m;
 
 	/*
 	Constructor voor nGram, specificeer welke corpus gebruikt wordt en welke orde n-grams berekend worden.
@@ -161,7 +161,10 @@ public class NGram{
 	
 	}
 	
-	
+	public int getN(){
+		return this.nGramSize;
+	}
+
 	/*
 	Print de m meest voorkomende NGrams uit.
 	*/
