@@ -106,7 +106,7 @@ public class FileManager {
 			if ( nextReadSentence.isEmpty() && !currentLine.isEmpty()) {
 				currentLine = currentLine + " </s>";
 			} 
-			System.out.println(currentLine);
+			//System.out.println(currentLine);
 			return currentLine;
 			
 		} catch (IOException e) {
