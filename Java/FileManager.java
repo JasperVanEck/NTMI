@@ -71,10 +71,29 @@ public class FileManager {
 			return "";
 		}
 	}
+	
+	public String readNextLine2() {
+		try {
+			String currentLine = readerIn.readLine();
+			System.out.println(currentLine);
+			return readerIn.readLine();
+		} catch (IOException e) {
+			System.err.println("There was an error reading from file " + fileIn);
+			return "";
+		}
+	}
 
 	//Closes the file reader and writer.	
 	public void terminate() throws IOException {
 		readerIn.close();
 		writerOut.close();
+	}
+	
+	private String addStartSymbol() {
+		return "<s>";
+	}
+	
+	private String addEndSymbol() {
+		return "</s>";
 	}
 }
