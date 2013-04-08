@@ -208,5 +208,10 @@ public class NGram{
 			System.out.println("Couldn't close file.");
 		}
 	}
+	
+	public int getValue(String key){
+			return this.map.get(key);			
+	}
+	
 }
 
