@@ -6,5 +6,5 @@
 *.ear
 
 # Misc. Files #
-.txt
-.zip
+*.txt
+*.zip
