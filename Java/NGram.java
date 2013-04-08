@@ -191,18 +191,22 @@ public class NGram{
 		Iterator entries = sortedMap.entrySet().iterator();
 		while(i < 25 && entries.hasNext()){
 			Map.Entry nGram = (Map.Entry) entries.next();
-			try{
 			this.manager.writeToFile((String) nGram.getKey());
-			}catch(IOException e){
-				System.out.println("Couldn't write to file");
-			}
 			i++;
 		}
-		this.manager.terminate();
+		try{
+			this.manager.terminate();
+		}catch(IOException e){
+			System.out.println("Couldn't close file");
+		}
 	}
 
 	public void terminate(){
-		this.manager.terminate();
+		try{
+			this.manager.terminate();
+		}catch(IOException e){
+			System.out.println("Couldn't close file.");
+		}
 	}
 }
 
