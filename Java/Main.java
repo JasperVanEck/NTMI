@@ -48,11 +48,12 @@ public class Main{
 		System.out.printf("N: %d \nFilename: %s\nAdditional file: %s\n", n, fileName, additionalFile);
 		NGram nGram = new NGram(fileName, n, m);
 		//nGram.writeTopFrequencies();
-		//nGram.terminate();
-		nGram.printSumFrequencies();
-		nGram.printTopFrequencies();
-		//NGram nMinOneGram = new NGram(fileName, n - 1, m);
+		//nGram.printSumFrequencies();
+		//nGram.printTopFrequencies();
+		NGram nMinOneGram = new NGram(fileName, n - 1, m);
 		//nMinOneGram.printSumFrequencies();
 		//nMinOneGram.printTopFrequencies();
+		//ProbabilityCalculator probCalc = new ProbabilitiyCalculator(nGram, nMinOneGram, additionalFile);
+		//probCalc.calculate();
 	}
 }
