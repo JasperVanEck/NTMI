@@ -43,6 +43,14 @@ public class FileManager {
 			System.exit(1);
 		}	
 	}
+	
+	public void writeToFile(String data) {
+		try {
+			this.writerOut.write(data + "\n");
+		} catch (IOException e) {
+			System.out.println("There was a problem writing to the file");
+		}
+	}
 
 	//Reads the whole file, by appending every read line. Also replaces newlines with a single space.
 	public String readWholeFile() {
@@ -75,7 +83,8 @@ public class FileManager {
 	public String readNextLine2() {
 		try {
 			String currentLine = readerIn.readLine();
-			if (currentLine.contains("     ")) {
+			
+			if ( currentLine != null && currentLine.contains("     ")) {
 				currentLine = currentLine.replace("     ", "<s> ");
 			}
 			
