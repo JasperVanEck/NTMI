@@ -75,8 +75,12 @@ public class FileManager {
 	public String readNextLine2() {
 		try {
 			String currentLine = readerIn.readLine();
+			if (currentLine.contains("     ")) {
+				currentLine = currentLine.replace("     ", "<s> ");
+			}
+			
 			System.out.println(currentLine);
-			return readerIn.readLine();
+			return currentLine;
 		} catch (IOException e) {
 			System.err.println("There was an error reading from file " + fileIn);
 			return "";
