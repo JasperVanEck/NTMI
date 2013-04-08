@@ -13,6 +13,7 @@ public class FileManager {
 	FileWriter writerOut;
 	String fileOut;
 	int sizeIn;
+	String nextReadSentence;
 	
 	//Default constructor, only creates a file reader.
 	public FileManager(String fileIn) {
@@ -41,7 +42,7 @@ public class FileManager {
 		} catch (Throwable e) {
 			System.err.println("There was an error opening the file...");
 			System.exit(1);
-		}	
+		}
 	}
 	
 	public void writeToFile(String data) {
@@ -80,16 +81,34 @@ public class FileManager {
 		}
 	}
 	
+	// Reads next line of file, 
 	public String readNextLine2() {
+		String currentLine = "";
 		try {
-			String currentLine = readerIn.readLine();
-			
-			if ( currentLine != null && currentLine.contains("     ")) {
-				currentLine = currentLine.replace("     ", "<s> ");
+			// first sentence of text needs a <s> symbol.
+			if (nextReadSentence == null)
+			{
+				currentLine = "<s> " + readerIn.readLine();
+			} else {
+				currentLine = nextReadSentence;
 			}
 			
+			nextReadSentence = readerIn.readLine();
+			
+			if (nextReadSentence == null) {
+				return null;
+			}
+			
+			if (currentLine.isEmpty() && !nextReadSentence.isEmpty()) {
+				nextReadSentence = "<s> " + nextReadSentence;
+			}
+			
+			if ( nextReadSentence.isEmpty() && !currentLine.isEmpty()) {
+				currentLine = currentLine + " </s>";
+			} 
 			System.out.println(currentLine);
 			return currentLine;
+			
 		} catch (IOException e) {
 			System.err.println("There was an error reading from file " + fileIn);
 			return "";
@@ -100,13 +119,5 @@ public class FileManager {
 	public void terminate() throws IOException {
 		readerIn.close();
 		writerOut.close();
-	}
-	
-	private String addStartSymbol() {
-		return "<s>";
-	}
-	
-	private String addEndSymbol() {
-		return "</s>";
 	}
 }
