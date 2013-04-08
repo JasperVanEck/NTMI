@@ -43,5 +43,10 @@ public class Main{
 
 		System.out.printf("N: %d \nFilename: %s\n", n, fileName);
 		NGram nGram = new NGram(fileName, n, m);
+		nGram.printSumFrequencies();
+		nGram.printTopFrequencies();
+		NGram nMinOneGram = new NGram(fileName, n - 1, m);
+		nMinOneGram.printSumFrequencies();
+		nMinOneGram.printTopFrequencies();
 	}
 }
