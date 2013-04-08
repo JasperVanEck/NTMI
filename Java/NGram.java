@@ -184,6 +184,25 @@ public class NGram{
 			sum = sum + entry.getValue();
 		}
 		System.out.println("Total of all frequencies: " + sum);
-	}	
+	}
+
+	public void writeTopFrequencies(){
+		int i = 0;
+		Iterator entries = sortedMap.entrySet().iterator();
+		while(i < 25 && entries.hasNext()){
+			Map.Entry nGram = (Map.Entry) entries.next();
+			try{
+			this.manager.writeToFile((String) nGram.getKey());
+			}catch(IOException e){
+				System.out.println("Couldn't write to file");
+			}
+			i++;
+		}
+		this.manager.terminate();
+	}
+
+	public void terminate(){
+		this.manager.terminate();
+	}
 }
 

@@ -15,6 +15,7 @@ public class Main{
 		
 		Scanner sc = new Scanner(System.in);
 		String fileName = "test_sentences.txt";
+		String additionalFile = "add_sentences.txt";
 		int n = 2;
 		int m = 10;
 
@@ -22,6 +23,9 @@ public class Main{
 		{
 			if(args[i].equals("-f")){
 				fileName = args[i + 1];
+			}
+			if(args[i].equals("-af")){
+				additionalFile = args[i + 1];
 			}
 			if(args[i].equals("-n")){
 				try{
@@ -41,12 +45,12 @@ public class Main{
 			}
 		}
 
-		System.out.printf("N: %d \nFilename: %s\n", n, fileName);
+		System.out.printf("N: %d \nFilename: %s\nAdditional file: %s\n", n, fileName, additionalFile);
 		NGram nGram = new NGram(fileName, n, m);
 		nGram.printSumFrequencies();
 		nGram.printTopFrequencies();
-		NGram nMinOneGram = new NGram(fileName, n - 1, m);
-		nMinOneGram.printSumFrequencies();
-		nMinOneGram.printTopFrequencies();
+		//NGram nMinOneGram = new NGram(fileName, n - 1, m);
+		//nMinOneGram.printSumFrequencies();
+		//nMinOneGram.printTopFrequencies();
 	}
 }
