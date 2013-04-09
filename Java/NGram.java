@@ -15,13 +15,14 @@ public class NGram{
 	private FileManager manager;
 	private int nGramSize;
 	private int m;
+	private int sentences;
 
 	/*
 	Constructor voor nGram, specificeer welke corpus gebruikt wordt en welke orde n-grams berekend worden.
 	*/
 	public NGram(String inputFile, int n) {
 		nGramSize = n;
-		
+		this.sentences = 0;
 		String inputFileName = inputFile.replaceFirst("\\.txt", "");
 		String outputFile = inputFileName + "_" + n + "grams.txt";
 				
@@ -63,9 +64,11 @@ public class NGram{
 		while(nextLine != null){
 		
 			if (nextLine.matches(".*\\w.*")){
-				nextLine = nextLine.trim().replaceAll(" +"," ");
+				nextLine = nextLine.trim().replaceAll(" +"," ");				
 				nextLine = nextLine.replace("<s> ", startsymbols);
-				
+				if(nextLine.contains("</s>")){
+					this.sentences++;
+				}
 
 				String[] currentWords = splitPoint.split(nextLine);
 				
@@ -196,6 +199,10 @@ public class NGram{
 	
 	public int getValue(String key){
 			return this.map.get(key);			
+	}
+	
+	public int getTotalSentences(){
+			return this.sentences;
 	}
 	
 }

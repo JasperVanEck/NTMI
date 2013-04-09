@@ -58,27 +58,54 @@ public class ProbabilityCalculator{
 		
 		while(nextLine != null){
 			nextLine = nextLine + " </s>";
-			for (int i = 0; i < this.n; i++){
+			for (int i = 1; i < this.n; i++){
 				nextLine = "<s> " + nextLine;
 			}
 			double probability = 1;
+			//System.out.println(nextLine);
 			String[] words = splitPoint.split(nextLine);
-						
-			for(int i=this.nGramSize-1; i < words.length; i++ ){
-				String[] tempGramMinOne = Arrays.copyOfRange(words, i-nGramSize + 1, i - 1);
-				String[] tempGram = Arrays.copyOfRange(words, i-nGramSize + 1, i);
+			if(words.length - this.n > this.n){
 				
-				String tempGramMinOne = ("" + Arrays.asList(tempGramMinOne)).replaceAll("(^.|.$)", "").replace(", ", " ");
-				String tempGram = ("" + Arrays.asList(tempGram)).replaceAll("(^.|.$)", "").replace(", ", " ");;
-	
-				double freq1 = nGrams[0].getValue(tempGram);
-				double freq2 = nGrams[1].getValue(tempGramMinOne);
-				
-				probability = probability * (freq1/freq2);
-				
-				
+				boolean firstrun = true;
+							
+				for(int i=this.n; i < words.length; i++ ){
+					String[] tempGramMinOne = Arrays.copyOfRange(words, i-this.n + 1, i);
+					String[] tempGram = Arrays.copyOfRange(words, i-this.n + 1, i+1);
+					
+					String shortSentence = ("" + Arrays.asList(tempGramMinOne)).replaceAll("(^.|.$)", "").replace(", ", " ");
+					String sentence = ("" + Arrays.asList(tempGram)).replaceAll("(^.|.$)", "").replace(", ", " ");
+					
+					//System.out.println("shortsentence is: " + shortSentence);
+					//System.out.println("sentence is: " + sentence);
+					
+					
+					double freq2;
+					double freq1;
+					
+					try{
+						freq1 = nGrams[0].getValue(sentence);
+						if(firstrun){
+							 freq2 = nGrams[1].getTotalSentences();
+							 firstrun = false;
+						}else{
+							freq2 = nGrams[1].getValue(shortSentence);
+						}
+					} catch(Exception e){
+						freq1 = 0;
+						freq2 = 1;
+					}
+					
+					probability = probability * (freq1/freq2);
+					System.out.println(probability);
+					
+					
+				}
+				System.out.printf("The probability for sentence: '%s' is: %.30f \n", nextLine, probability);
+				nextLine = this.manager.readNextLine();
+			}else{
+				System.out.println("The sentence was too short for the ngram size");
+				nextLine = this.manager.readNextLine();
 			}
-			System.out.printf("The probability for sentence: '%s' is: %.10f", nextLine, probability);
 		
 		}
 	}
