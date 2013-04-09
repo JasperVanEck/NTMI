@@ -10,7 +10,7 @@ public class ProbabilityCalculator{
 	private FileManager manager;
 	private int n;	
 
-	public ProbabilityCalculator(String add_file, String corpusFile, int n){
+	public ProbabilityCalculator(String addFile, String corpusFile, int n){
 		this.n = n;
 		
 		this.nGrams = new NGram[2];
@@ -52,23 +52,33 @@ public class ProbabilityCalculator{
 	
 	public void calculateArbitrary(){
 	
-		Pattern splitPoint = pattern.compile(" ");
+		Pattern splitPoint = Pattern.compile(" ");
 		String nextLine = this.manager.readNextLine();	
 		
-		while(nextLine != null){
 		
+		while(nextLine != null){
+			nextLine = nextLine + " </s>";
 			for (int i = 0; i < this.n; i++){
 				nextLine = "<s> " + nextLine;
 			}
-			
+			double probability = 1;
 			String[] words = splitPoint.split(nextLine);
-			fillNGramArray(words.length);
-			
-			while(){
+						
+			for(int i=this.nGramSize-1; i < words.length; i++ ){
+				String[] tempGramMinOne = Arrays.copyOfRange(words, i-nGramSize + 1, i - 1);
+				String[] tempGram = Arrays.copyOfRange(words, i-nGramSize + 1, i);
+				
+				String tempGramMinOne = ("" + Arrays.asList(tempGramMinOne)).replaceAll("(^.|.$)", "").replace(", ", " ");
+				String tempGram = ("" + Arrays.asList(tempGram)).replaceAll("(^.|.$)", "").replace(", ", " ");;
+	
+				double freq1 = nGrams[0].getValue(tempGram);
+				double freq2 = nGrams[1].getValue(tempGramMinOne);
+				
+				probability = probability * (freq1/freq2);
 				
 				
-			
 			}
+			System.out.printf("The probability for sentence: '%s' is: %.10f", nextLine, probability);
 		
 		}
 	}

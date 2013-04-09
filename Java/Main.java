@@ -54,6 +54,7 @@ public class Main{
 		//nMinOneGram.printSumFrequencies();
 		//nMinOneGram.printTopFrequencies();
 		ProbabilityCalculator probCalc = new ProbabilityCalculator(additionalFile, n);
-		probCalc.calculate();
+		//probCalc.calculate();
+		probCalc.calculateArbitrary();
 	}
 }

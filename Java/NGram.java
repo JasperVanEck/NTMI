@@ -55,11 +55,16 @@ public class NGram{
 		String nGram = "";
 		boolean firstRun = true;
 		
+		String startsymbols = "";
+		for(int i=1; i < nGramSize; i++){
+			startsymbols = startsymbols + "<s> ";
+		}
 		
 		while(nextLine != null){
 		
 			if (nextLine.matches(".*\\w.*")){
 				nextLine = nextLine.trim().replaceAll(" +"," ");
+				nextLine = nextLine.replace("<s> ", startsymbols);
 				
 
 				String[] currentWords = splitPoint.split(nextLine);
