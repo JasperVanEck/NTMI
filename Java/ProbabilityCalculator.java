@@ -13,8 +13,9 @@ public class ProbabilityCalculator{
 
 	public ProbabilityCalculator(String file, int n){
 		this.n = n;
-		this.nGrams[n] = new NGram(file, n, 10);
-		this.nGrams[n - 1] = new NGram(file, n - 1, 10);
+		this.nGrams = new NGram[2];
+		this.nGrams[0] = new NGram(file, n);
+		this.nGrams[1] = new NGram(file, n - 1);
 		
 		this.manager = new FileManager(file);
 		
@@ -39,8 +40,8 @@ public class ProbabilityCalculator{
 				String sentence = ("" + Arrays.asList(words)).replaceAll("(^.|.$)", "").replace(", ", " ");
 				String shortSentence = ("" + Arrays.asList(wordsMinOne)).replaceAll("(^.|.$)", "").replace(", ", " ");;
 				
-				double freq1 = nGrams[this.n].getValue(sentence);
-				double freq2 = nGrams[this.n - 1].getValue(shortSentence);
+				double freq1 = nGrams[0].getValue(sentence);
+				double freq2 = nGrams[1].getValue(shortSentence);
 				
 				System.out.printf("Given '%s' the chance for '%s' is: %.10f \n", shortSentence, sentence, freq1/freq2);
 				
