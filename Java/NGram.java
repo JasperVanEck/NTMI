@@ -26,7 +26,7 @@ public class NGram{
 		String outputFile = inputFileName + "_" + n + "grams.txt";
 				
 		this.manager = new FileManager(inputFile, outputFile);
-		computeNGrams2();
+		computeNGramsWithDummySymbols();
 		sortMap();
 		
 		
@@ -42,39 +42,16 @@ public class NGram{
 		//printSumFrequencies();
 	}
 	
-	/*
-	computeNGrams krijgt van de manager een string met alle tekst. Deze wordt woord voor woord afgelopen, 
-	grams van gewenst formaat gemaakt en in de hashmap opgeslagen.
-	*/
-	public void computeNGrams(){
-		Pattern splitPoint = Pattern.compile(" ");
-		
-		String text = manager.readWholeFile();
-		String nGram = "";
-		
-		String[] words = splitPoint.split(text);
-		
-		int lineSize = words.length - (nGramSize);
-		
-		for(int i=0; i < lineSize; i++){
-			nGram = words[i];
-			for(int j=1; j < nGramSize; j++){
-				nGram = nGram + " " + words[i+j];
-			}
-			addToMap(nGram);
-		}
-
-	}
 	
 	/*
-	computeNGrams2 leest van de manager regel voor regel de gegeven file uit. De woorden die meerdere malen worden gebruikt, worden tijdelijk
+	computeNGramsWithDummySymbols leest van de manager regel voor regel de gegeven file uit. De woorden die meerdere malen worden gebruikt, worden tijdelijk
 	opgeslagen. Hierdoor is het mogelijk om het bestand regel voor regel uit te lezen, in plaats van het hele bestand in 1 haal uit te lezen.
-	Verder werkt computeNGrams2 het zelfde als computeNGrams.
+	Verder werkt computeNGramsWithDummySymbols het zelfde als computeNGrams.
 	 */
-	public void computeNGrams2(){
+	public void computeNGramsWithDummySymbols(){
 		Pattern splitPoint = Pattern.compile(" ");
 		String[] pastWords = new String[nGramSize - 1];
-		String nextLine = manager.readNextLine2();
+		String nextLine = manager.readNextLineWithDummySymbols();
 		String nGram = "";
 		boolean firstRun = true;
 		
@@ -130,9 +107,9 @@ public class NGram{
 						System.out.println(Arrays.toString(words) + "\n");
 					}
 				}
-				nextLine = manager.readNextLine2();
+				nextLine = manager.readNextLineWithDummySymbols();
 			}else{
-				nextLine = manager.readNextLine2();
+				nextLine = manager.readNextLineWithDummySymbols();
 			}
 		}
 
