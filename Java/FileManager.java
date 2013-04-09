@@ -82,7 +82,7 @@ public class FileManager {
 	}
 	
 	// Reads next line of file, 
-	public String readNextLine2() {
+	public String readNextLineWithDummySymbols() {
 		String currentLine = "";
 		try {
 			// first sentence of text needs a <s> symbol.
