@@ -6,25 +6,31 @@ import java.io.*;
 
 public class ProbabilityCalculator{
 
-	private NGram nGram;
-	private NGram nMinOneGram;
+	private NGram[] nGrams;
 	private FileManager manager;
-	
-	public ProbabilityCalculator(NGram nGram, NGram nMinOneGram, String file){
-		this.nGram = nGram;
-		this.nMinOneGram = nMinOneGram;
+	private int n;	
+	private String corpusFile;
+
+	public ProbabilityCalculator(String file, int n){
+		this.n = n;
+		this.nGrams[n] = new NGram(file, n, 10);
+		this.nGrams[n - 1] = new NGram(file, n - 1, 10);
 		
 		this.manager = new FileManager(file);
 		
 		
 	}
 	
+	public ProbabilityCalculator(String add_file, String corpusFile){
+		this.manager = new FileManager(add_file);
+		this.corpusFile = corpusFile;
+	
+	}
+	
 	public void calculate(){
 	
 		Pattern splitPoint = Pattern.compile(" ");
 		String nextLine = this.manager.readNextLine();
-		
-		int n = nGram.getN();
 				
 		while(nextLine != null){
 		
@@ -32,15 +38,15 @@ public class ProbabilityCalculator{
 			
 			int wordsLength = words.length;
 			
-			if(wordsLength == n){
+			if(wordsLength == this.n){
 				String[] wordsMinOne = new String[words.length-1];
 				wordsMinOne = Arrays.copyOfRange(words, 0, words.length-1);
 				
 				String sentence = ("" + Arrays.asList(words)).replaceAll("(^.|.$)", "").replace(", ", " ");
 				String shortSentence = ("" + Arrays.asList(wordsMinOne)).replaceAll("(^.|.$)", "").replace(", ", " ");;
 				
-				double freq1 = nGram.getValue(sentence);
-				double freq2 = nMinOneGram.getValue(shortSentence);
+				double freq1 = nGrams[this.n].getValue(sentence);
+				double freq2 = nGrams[this.n - 1].getValue(shortSentence);
 				
 				System.out.printf("Given '%s' the chance for '%s' is: %.10f \n", shortSentence, sentence, freq1/freq2);
 			}
@@ -55,9 +61,32 @@ public class ProbabilityCalculator{
 		String nextLine = this.manager.readNextLine();	
 		
 		while(nextLine != null){
-			String[] words = splitPoint.split(nextLine);
-			String[] wordsMinOne = Arrays.copyOfRange(words, 0, words.length-1);
-		}
 	
+			String[] words = splitPoint.split(nextLine);
+			
+			
+			while(){
+				String[] wordsMinOne = Arrays.copyOfRange(words, 0, words.length-1);
+			
+			
+			}
+		
+		}
+	}
+	
+	public int getNGramArraySize(){
+		return this.nGrams.size();
+	}
+	
+	public void fillNGramArray(int n){
+	
+		int startpoint = getNGramArraySize() - 1;
+		
+		for(int i = startpoint; i < n; i++){
+			NGram gram = new NGram(this.corpusFile, n);
+			this.nGrams[i] = gram;
+		}
+		
 	}
 }
+
