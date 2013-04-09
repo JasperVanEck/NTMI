@@ -19,7 +19,7 @@ public class ProbabilityCalculator{
 		
 	}
 	
-	public double calculate(){
+	public void calculate(){
 	
 		Pattern splitPoint = Pattern.compile(" ");
 		String nextLine = this.manager.readNextLine();
@@ -43,18 +43,21 @@ public class ProbabilityCalculator{
 				double freq2 = nMinOneGram.getValue(shortSentence);
 				
 				System.out.printf("Given '%s' the chance for '%s' is: %.10f \n", shortSentence, sentence, freq1/freq2);
-				
-				
-				
 			}
 			
-			nextLine = this.manager.readNextLine();
-			
-			
+			nextLine = this.manager.readNextLine();			
 		}
-		
-		return 0;
-	}	
+	}
 	
-
+	public void calculateArbitrary(){
+	
+		Pattern splitPoint = pattern.compile(" ");
+		String nextLine = this.manager.readNextLine();	
+		
+		while(nextLine != null){
+			String[] words = splitPoint.split(nextLine);
+			String[] wordsMinOne = Arrays.copyOfRange(words, 0, words.length-1);
+		}
+	
+	}
 }
