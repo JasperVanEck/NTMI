@@ -9,23 +9,17 @@ public class ProbabilityCalculator{
 	private NGram[] nGrams;
 	private FileManager manager;
 	private int n;	
-	private String corpusFile;
 
-	public ProbabilityCalculator(String file, int n){
+	public ProbabilityCalculator(String add_file, String corpusFile, int n){
 		this.n = n;
+		
 		this.nGrams = new NGram[2];
-		this.nGrams[0] = new NGram(file, n);
-		this.nGrams[1] = new NGram(file, n - 1);
+		this.nGrams[0] = new NGram(corpusFile, n);
+		this.nGrams[1] = new NGram(corpusFile, n - 1);
 		
-		this.manager = new FileManager(file);
+		this.manager = new FileManager(addFile);
 		
 		
-	}
-	
-	public ProbabilityCalculator(String add_file, String corpusFile){
-		this.manager = new FileManager(add_file);
-		this.corpusFile = corpusFile;
-	
 	}
 	
 	public void calculate(){
@@ -62,32 +56,22 @@ public class ProbabilityCalculator{
 		String nextLine = this.manager.readNextLine();	
 		
 		while(nextLine != null){
-	
-			String[] words = splitPoint.split(nextLine);
+		
+			for (int i = 0; i < this.n; i++){
+				nextLine = "<s> " + nextLine;
+			}
 			
+			String[] words = splitPoint.split(nextLine);
+			fillNGramArray(words.length);
 			
 			while(){
-				String[] wordsMinOne = Arrays.copyOfRange(words, 0, words.length-1);
-			
+				
+				
 			
 			}
 		
 		}
 	}
 	
-	public int getNGramArraySize(){
-		return this.nGrams.size();
-	}
-	
-	public void fillNGramArray(int n){
-	
-		int startpoint = getNGramArraySize() - 1;
-		
-		for(int i = startpoint; i < n; i++){
-			NGram gram = new NGram(this.corpusFile, n);
-			this.nGrams[i] = gram;
-		}
-		
-	}
 }
 
