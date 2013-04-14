@@ -94,25 +94,35 @@ public class NGram{
 				
 				
 				int lastValueOfWords = 0;
-				
-				for(int i=0; i <= lineSize; i++){
+				int i = 0;
+				int j = 1;
+
+				for(; i <= lineSize; i++){
 					nGram = words[i];
+					String lastWord = "";
+
 					//System.out.println(words[i]);
-					for(int j=1; j < nGramSize; j++){
-						nGram = nGram + " " + words[i+j];
+					for(; j < nGramSize; j++){
+						lastWord = words[i + j];
+						nGram = nGram + " " + lastWord;
 						//System.out.println(words[i+j]);
 					}
 					addToMap(nGram);
-					lastValueOfWords = i;
-					//System.out.println(nGram);
 				}
+
+				if(Arrays.asList(words).contains("</s>")){
+					lastValueOfWords = i + j;
+				}else{
+					lastValueOfWords = i;
+				}
+
 				for (int ii=0; ii < nGramSize -1; ii++){
 					lastValueOfWords++;
 					try{
 						pastWords[ii] = words[lastValueOfWords];
 					} catch (Exception e){
-						System.out.println("Ngram size too big for this sentence:");
-						System.out.println(Arrays.toString(words) + "\n");
+						//System.out.println("Ngram size too big for this sentence:");
+						//System.out.println(Arrays.toString(words) + "\n");
 					}
 				}
 				nextLine = manager.readNextLineWithDummySymbols();

@@ -96,11 +96,11 @@ public class ProbabilityCalculator{
 					}
 					
 					probability = probability * (freq1/freq2);
-					System.out.println(probability);
+					//System.out.println(probability);
 					
 					
 				}
-				System.out.printf("The probability for sentence: '%s' is: %.30f \n", nextLine, probability);
+				System.out.printf("The probability for sentence: '%s' is: %e \n", nextLine, probability);
 				nextLine = this.manager.readNextLine();
 			}else{
 				System.out.println("The sentence was too short for the ngram size");
