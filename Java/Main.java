@@ -53,8 +53,8 @@ public class Main{
 		//NGram nMinOneGram = new NGram(fileName, n - 1, m);
 		//nMinOneGram.printSumFrequencies();
 		//nMinOneGram.printTopFrequencies();
-		ProbabilityCalculator probCalc = new ProbabilityCalculator(additionalFile, fileName, n);
+		//ProbabilityCalculator probCalc = new ProbabilityCalculator(additionalFile, fileName, n);
 		//probCalc.calculate();
-		probCalc.calculateArbitrary();
+		//probCalc.calculateArbitrary();
 	}
 }
