@@ -7,9 +7,6 @@
  
 public class Permutations {
 	private static int counter = 1;
-	private String[] array1 = {"She", "daughters", "youngest", "was", "the", "of", "the", "two"};
-	private String[] array2 = {"She", "was", "the", "youngest"};
-	private String[] array3 = {"a", "b", "c"};
 	private ArrayList<String[]> results;
 
 	public static void main(String[] args){
@@ -18,12 +15,8 @@ public class Permutations {
 		String[] array3 = {"a", "b", "c"};
 		String[] array4 = {"She", "daughters", "youngest", "was", "the", "of", "the", "two"};
 		String[] array5 = {"She", "was", "the", "youngest"};
-		Permutations perm = new Permutations();
+		Permutations perm = new Permutations(array4, "Array-Length8");
 		//System.out.println(perm.generatePermutations(perm.getArray2()));
-	}
-	
-	public Permutations() {
-		this(array1, "Array-Length8");
 	}
 	
 	public Permutations(String[] arrayToPermute) {
