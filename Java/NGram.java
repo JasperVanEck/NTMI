@@ -94,15 +94,13 @@ public class NGram{
 				
 				
 				int lastValueOfWords = 0;
-				int i = 0;
-				int j = 1;
 
-				for(; i <= lineSize; i++){
+				for(int i = 0; i <= lineSize; i++){
 					nGram = words[i];
 					String lastWord = "";
 
 					//System.out.println(words[i]);
-					for(; j < nGramSize; j++){
+					for(int j = 1; j < nGramSize; j++){
 						lastWord = words[i + j];
 						nGram = nGram + " " + lastWord;
 						//System.out.println(words[i+j]);
@@ -111,9 +109,9 @@ public class NGram{
 				}
 
 				if(Arrays.asList(words).contains("</s>")){
-					lastValueOfWords = i + j;
+					lastValueOfWords = lineSize + nGramSize - 1;
 				}else{
-					lastValueOfWords = i;
+					lastValueOfWords = lineSize;
 				}
 
 				for (int ii=0; ii < nGramSize -1; ii++){
