@@ -15,7 +15,7 @@ public class Permutations {
 		String[] array3 = {"a", "b", "c"};
 		String[] array4 = {"She", "daughters", "youngest", "was", "the", "of", "the", "two"};
 		String[] array5 = {"She", "was", "the", "youngest"};
-		Permutations perm = new Permutations(array4, "Array-Length8");
+		Permutations perm = new Permutations(array5, "Array-Length4");
 		//System.out.println(perm.generatePermutations(perm.getArray2()));
 	}
 	
