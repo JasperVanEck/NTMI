@@ -3,72 +3,82 @@
  * 
  */
  import java.util.*;
- import java.util.Arrays;
- import java.util.Collections;
- import java.lang.reflect.Array;
+ import java.io.*;
  
 public class Permutations {
 	private static int counter = 1;
-	private String[] array1 = {"She", "daughters", "youngest", "was", "the", "of", "the", "two"};
-	private String[] array2 = {"She", "was", "the", "youngest"};
+	private ArrayList<String[]> results;
+
 	public static void main(String[] args){
 		String[] array1 = {"1", "2", "3"};
 		String[] array2 = {"1", "2", "3", "4"};
 		String[] array3 = {"a", "b", "c"};
 		String[] array4 = {"She", "daughters", "youngest", "was", "the", "of", "the", "two"};
 		String[] array5 = {"She", "was", "the", "youngest"};
-		Permutations perm = new Permutations();
-		System.out.println(perm.generatePermutations(perm.getArray2()));
+		Permutations perm = new Permutations(array5, "Array-Length4");
+		//System.out.println(perm.generatePermutations(perm.getArray2()));
 	}
 	
-	public Permutations() {
-		//generatePermutations(permArray);
+	public Permutations(String[] arrayToPermute) {
+		results = new ArrayList<String[]>();
+		generatePermutations(arrayToPermute);
+		writeResultsToFile("resultsOfPermutation");
 	}
 	
-	public String generatePermutations(String[] permArray) {
+	public Permutations(String[] arrayToPermute, String fileTo) {
+		results = new ArrayList<String[]>();
+		generatePermutations(arrayToPermute);
+		writeResultsToFile(fileTo);
+	}
+	
+	public void generatePermutations(String[] permArray) {
 		//System.out.println(counter+ ". " + Arrays.toString(permArray));
 		//System.out.println(factorial(permArray.length));
 		int fact = factorial(permArray.length);
 		String resultString = "";
  		while(counter < fact) {
 			//System.out.println("\t Step 1:");
-			resultString = resultString + rightToLeft(permArray, permArray.length - 1, permArray.length - 1) + "\n";
+			rightToLeft(permArray, permArray.length - 1, permArray.length - 1);
 			//System.out.println("\t Step 2:");
-			resultString = resultString + rightToLeft(permArray, permArray.length - 1, 1) + "\n";
+			rightToLeft(permArray, permArray.length - 1, 1);
 			//System.out.println("\t Step 3:");
-			resultString = resultString + leftToRight(permArray, 0, permArray.length - 1) + "\n";
+			leftToRight(permArray, 0, permArray.length - 1);
 			//System.out.println("\t Step 4:");
-			resultString = resultString + rightToLeft(permArray, 1, 1) + "\n";
+			rightToLeft(permArray, 1, 1);
 		}
-		return resultString;
+		//printResultsOfPermutation();
 	}
 	
-	public String rightToLeft(String[] array, int element, int times) {
+	public void rightToLeft(String[] array, int element, int times) {
 		int n = element;
 		String resultString = "";
 		
 		for(int i = times; i > 0; i--) {
 			String[] result = swap(array, n, n - 1);
-			resultString = resultString + " " + Arrays.toString(result) + "\n";
+			//resultString = resultString + " " + Arrays.toString(result) + "\n";
 			//System.out.println(counter + ". " + Arrays.toString(result));
+			String[] copy = new String[result.length];
+			System.arraycopy(result,0,copy,0,result.length);
+			results.add(copy);
 			n--;
 			this.counter++;
 		}
-		return resultString;
 	}
 	
-	public String leftToRight(String[] array, int element, int times) {
+	public void leftToRight(String[] array, int element, int times) {
 		int n = element;
 		String resultString = "";
 		
 		for(int i = 0; i < times; i++) {
 			String[] result = swap(array, n, n + 1);
-			resultString = resultString + " " + Arrays.toString(result) + "\n";
+			//resultString = resultString + " " + Arrays.toString(result) + "\n";
 			//System.out.println(counter + ". " + Arrays.toString(result));
+			String[] copy = new String[result.length];
+			System.arraycopy(result,0,copy,0,result.length);
+			results.add(copy);
 			n++;
 			this.counter++;
 		}
-		return resultString;
 	}
 	
 	public String[] swap(String[] array, int n, int m) {
@@ -85,12 +95,34 @@ public class Permutations {
 		}
 		return result;
 	}
-	
-	public String[] getArray1(){
-		return this.array1;
-	}
 
-	public String[] getArray2(){
-		return this.array2;
+	public void printResultsOfPermutation() {
+		for(String[] elem : results) {
+			System.out.println(Arrays.toString(elem));
+		}
+	}
+	
+	public ArrayList<String[]> getResultOfPermutation() {
+		return this.results;
+	}
+	
+	private void writeResultsToFile(String fileName) {
+		String fileNameTxt = fileName + ".txt";
+		try {
+			FileWriter fstream = new FileWriter(fileNameTxt);
+			BufferedWriter out = new BufferedWriter(fstream);
+			
+			for(String[] elem : this.results) {
+				String elemToString = elem[0];
+				for (int i = 1; i < elem.length; i++){
+					elemToString += " " + elem[i];
+				}
+				out.write(elemToString + "\n");
+			}
+			
+			out.close();
+		} catch (Exception e) {
+			System.out.println("Flabber");
+		}
 	}
 }
