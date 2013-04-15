@@ -15,8 +15,8 @@ public class Main{
 	public static void main(String[] args){
 		
 		Scanner sc = new Scanner(System.in);
-		String fileName = "test_sentences.txt";
-		String additionalFile = "add_sentences.txt";
+		String fileName = "austen.txt";
+		String additionalFile = "probability_sentences.txt";
 		int n = 2;
 		int m = 10;
 
@@ -47,13 +47,12 @@ public class Main{
 		}
 
 		System.out.printf("N: %d \nFilename: %s\nAdditional file: %s\n", n, fileName, additionalFile);
+		/* Run the NGramMaker class here */
 		//NGram nGram = new NGram(fileName, n, m);
 		//nGram.writeTopFrequencies();
 		//nGram.printSumFrequencies();
 		//nGram.printTopFrequencies();
-		//NGram nMinOneGram = new NGram(fileName, n - 1, m);
-		//nMinOneGram.printSumFrequencies();
-		//nMinOneGram.printTopFrequencies();
+		/* Run the probability calculator here */
 		ProbabilityCalculator probCalc = new ProbabilityCalculator(additionalFile, fileName, n);
 		//probCalc.calculate();
 		probCalc.calculateArbitrary();
