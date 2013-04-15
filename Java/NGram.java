@@ -26,7 +26,7 @@ public class NGram{
 		String inputFileName = inputFile.replaceFirst("\\.txt", "");
 		String outputFile = inputFileName + "_" + n + "grams.txt";
 				
-		this.manager = new FileManager(inputFile, outputFile);
+		this.manager = new FileManager(inputFile);
 		computeNGramsWithDummySymbols();
 		sortMap();
 		

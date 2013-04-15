@@ -5,6 +5,7 @@
  * 	-n	supply an integer value, which you want to use as N-Grams.
  *	-m	supply an integer value, which will be the m most frequent N-Grams.
  *	-f	supply the file name, of the file you want to make N-Grams of.
+ *	-af supply the additional file name, of the file that contains sentences for which the probabilities should be calculated.
  */
 
 import java.util.*;
@@ -46,15 +47,16 @@ public class Main{
 		}
 
 		System.out.printf("N: %d \nFilename: %s\nAdditional file: %s\n", n, fileName, additionalFile);
-		NGram nGram = new NGram(fileName, n, m);
+		//NGram nGram = new NGram(fileName, n, m);
 		//nGram.writeTopFrequencies();
 		//nGram.printSumFrequencies();
-		nGram.printTopFrequencies();
+		//nGram.printTopFrequencies();
 		//NGram nMinOneGram = new NGram(fileName, n - 1, m);
 		//nMinOneGram.printSumFrequencies();
 		//nMinOneGram.printTopFrequencies();
-		//ProbabilityCalculator probCalc = new ProbabilityCalculator(additionalFile, fileName, n);
+		ProbabilityCalculator probCalc = new ProbabilityCalculator(additionalFile, fileName, n);
 		//probCalc.calculate();
-		//probCalc.calculateArbitrary();
+		probCalc.calculateArbitrary();
+		probCalc.printTopTwoProbabilities();
 	}
 }

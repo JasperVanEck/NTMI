@@ -8,7 +8,8 @@ public class ProbabilityCalculator{
 
 	private NGram[] nGrams;
 	private FileManager manager;
-	private int n;	
+	private int n;
+	private TreeMap<Double, String> sortedSentences = new TreeMap<Double, String>();
 
 	public ProbabilityCalculator(String addFile, String corpusFile, int n){
 		this.n = n;
@@ -18,7 +19,6 @@ public class ProbabilityCalculator{
 		this.nGrams[1] = new NGram(corpusFile, n - 1);
 		
 		this.manager = new FileManager(addFile);
-		
 		
 	}
 	
@@ -44,6 +44,7 @@ public class ProbabilityCalculator{
 				double freq2 = nGrams[1].getValue(shortSentence);
 				
 				System.out.printf("Given '%s' the chance for '%s' is: %.10f \n", shortSentence, sentence, freq1/freq2);
+				
 			}
 			
 			nextLine = this.manager.readNextLine();			
@@ -53,8 +54,7 @@ public class ProbabilityCalculator{
 	public void calculateArbitrary(){
 	
 		Pattern splitPoint = Pattern.compile(" ");
-		String nextLine = this.manager.readNextLine();	
-		
+		String nextLine = this.manager.readNextLine();			
 		
 		while(nextLine != null){
 			nextLine = nextLine + " </s>";
@@ -100,13 +100,32 @@ public class ProbabilityCalculator{
 					
 					
 				}
-				System.out.printf("The probability for sentence: '%s' is: %e \n", nextLine, probability);
+				//System.out.printf("The probability for sentence: '%s' is: %e \n", nextLine, probability);
+				addToMap(nextLine, probability);
 				nextLine = this.manager.readNextLine();
 			}else{
-				System.out.println("The sentence was too short for the ngram size");
+				//System.out.println("The sentence was too short for the ngram size");
 				nextLine = this.manager.readNextLine();
 			}
 		
+		}
+	}
+	
+	public void addToMap(String sentence, double prob){
+		sortedSentences.put(prob, sentence);
+	}
+	
+	
+	public void printTopTwoProbabilities(){
+	
+		NavigableMap<Double, String> reversed = sortedSentences.descendingMap();
+	
+		int i=0;
+		Iterator entries = reversed.entrySet().iterator();
+		while(i < 2 && entries.hasNext()){
+			Map.Entry entry = (Map.Entry) entries.next();
+			System.out.printf("Probability for: '%s' is: %e \n", entry.getValue(), entry.getKey());
+			i++;
 		}
 	}
 	
