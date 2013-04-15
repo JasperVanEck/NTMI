@@ -19,44 +19,47 @@ public class Permutations {
 		//System.out.println(perm.generatePermutations(perm.getArray2()));
 	}
 	
+	// Default constructor that writes the permutations of an array to a file
 	public Permutations(String[] arrayToPermute) {
 		results = new ArrayList<String[]>();
 		generatePermutations(arrayToPermute);
 		writeResultsToFile("resultsOfPermutation");
 	}
 	
+	// Default constructor that writes to a specified file
 	public Permutations(String[] arrayToPermute, String fileTo) {
 		results = new ArrayList<String[]>();
 		generatePermutations(arrayToPermute);
 		writeResultsToFile(fileTo);
 	}
 	
+	// An implementation of the Steinhaus-Johnson-Trotter algorithm that computes
+	// all permutations with minimal changes. Swap elements of the array till the
+	// counter is equal to the factorial of the length of the array.
 	public void generatePermutations(String[] permArray) {
-		//System.out.println(counter+ ". " + Arrays.toString(permArray));
-		//System.out.println(factorial(permArray.length));
 		int fact = factorial(permArray.length);
 		String resultString = "";
  		while(counter < fact) {
-			//System.out.println("\t Step 1:");
+
 			rightToLeft(permArray, permArray.length - 1, permArray.length - 1);
-			//System.out.println("\t Step 2:");
+
 			rightToLeft(permArray, permArray.length - 1, 1);
-			//System.out.println("\t Step 3:");
+
 			leftToRight(permArray, 0, permArray.length - 1);
-			//System.out.println("\t Step 4:");
+			
 			rightToLeft(permArray, 1, 1);
 		}
-		//printResultsOfPermutation();
 	}
 	
+	// Swap an element in the array right to left a number of times. Copy the
+	// resulting array and add this to results array list.
 	public void rightToLeft(String[] array, int element, int times) {
 		int n = element;
 		String resultString = "";
 		
 		for(int i = times; i > 0; i--) {
 			String[] result = swap(array, n, n - 1);
-			//resultString = resultString + " " + Arrays.toString(result) + "\n";
-			//System.out.println(counter + ". " + Arrays.toString(result));
+
 			String[] copy = new String[result.length];
 			System.arraycopy(result,0,copy,0,result.length);
 			results.add(copy);
@@ -65,6 +68,7 @@ public class Permutations {
 		}
 	}
 	
+	// Same as right to left but in opposite order.
 	public void leftToRight(String[] array, int element, int times) {
 		int n = element;
 		String resultString = "";
@@ -81,6 +85,7 @@ public class Permutations {
 		}
 	}
 	
+	// Swap two elements of an array
 	public String[] swap(String[] array, int n, int m) {
 		String first = array[n];
 		array[n] = array[m];
@@ -88,6 +93,7 @@ public class Permutations {
 		return array;
 	}
 	
+	// Calculate the factorial of a number
 	public int factorial(int n) {
 		int result = 1;
 		for(int i = 1; i <= n; i++) {
@@ -95,17 +101,20 @@ public class Permutations {
 		}
 		return result;
 	}
-
+	
+	// print the results array
 	public void printResultsOfPermutation() {
 		for(String[] elem : results) {
 			System.out.println(Arrays.toString(elem));
 		}
 	}
 	
+	// getter for the results array
 	public ArrayList<String[]> getResultOfPermutation() {
 		return this.results;
 	}
 	
+	// write the results array to a file for later use
 	private void writeResultsToFile(String fileName) {
 		String fileNameTxt = fileName + ".txt";
 		try {
