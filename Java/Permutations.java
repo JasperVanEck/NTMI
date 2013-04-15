@@ -95,15 +95,7 @@ public class Permutations {
 		}
 		return result;
 	}
-	
-	public String[] getArray1(){
-		return this.array1;
-	}
 
-	public String[] getArray2(){
-		return this.array2;
-	}
-	
 	public void printResultsOfPermutation() {
 		for(String[] elem : results) {
 			System.out.println(Arrays.toString(elem));
