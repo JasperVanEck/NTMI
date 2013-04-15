@@ -57,7 +57,7 @@ public class ProbabilityCalculator{
 		String nextLine = this.manager.readNextLine();			
 		
 		while(nextLine != null){
-			nextLine = nextLine + " </s>";
+			//nextLine = nextLine + " </s>";
 			for (int i = 1; i < this.n; i++){
 				nextLine = "<s> " + nextLine;
 			}
@@ -121,10 +121,16 @@ public class ProbabilityCalculator{
 		NavigableMap<Double, String> reversed = sortedSentences.descendingMap();
 	
 		int i=0;
+		
 		Iterator entries = reversed.entrySet().iterator();
 		while(i < 2 && entries.hasNext()){
 			Map.Entry entry = (Map.Entry) entries.next();
-			System.out.printf("Probability for: '%s' is: %e \n", entry.getValue(), entry.getKey());
+			double prob = new Double(entry.getKey().toString());
+			if(prob > 0.0){
+				System.out.printf("Probability for: '%s' is: %e \n", entry.getValue(), entry.getKey());
+			}else{
+				System.out.println("The probabilities for (the rest of) the sentences are zero");
+			}
 			i++;
 		}
 	}
