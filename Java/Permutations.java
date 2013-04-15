@@ -23,7 +23,7 @@ public class Permutations {
 	}
 	
 	public Permutations() {
-		this(array1);
+		this(array1, "Array-Length8");
 	}
 	
 	public Permutations(String[] arrayToPermute) {
