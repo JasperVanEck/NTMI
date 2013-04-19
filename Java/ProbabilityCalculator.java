@@ -124,10 +124,11 @@ public class ProbabilityCalculator{
 			double probability = 1;
 			//System.out.println(nextLine);
 			String[] words = splitPoint.split(nextLine);
-			if(words.length - this.n > this.n){
+			
+			if(words.length - this.n >= this.n){
 				
 				boolean firstrun = true;
-							
+				//System.out.println("Ik ben echt bezig!");			
 				for(int i=this.n; i < words.length; i++ ){
 					String[] tempGramMinOne = Arrays.copyOfRange(words, i-this.n + 1, i);
 					String[] tempGram = Arrays.copyOfRange(words, i-this.n + 1, i+1);
@@ -139,7 +140,8 @@ public class ProbabilityCalculator{
 					//System.out.println("sentence is: " + sentence);
 					
 					
-					double freq2 = this.nGrams[0].countPrefix(shortSentence);
+					double freq2 = 625850//this.nGrams[0].countPrefix(shortSentence);
+					System.out.printf("Freq2 voor de prefix %s is %f \n", shortSentence, freq2);
 					double freq1 = 1;
 					
 					if(this.nGrams[0].containsKey(sentence)){
@@ -154,7 +156,7 @@ public class ProbabilityCalculator{
 							freq2 += this.nGrams[1].getValue(shortSentence);
 						}
 					}
-					
+					System.out.println("freq2 is" + freq2);
 					probability = probability * (freq1/freq2);
 					//System.out.println(probability);
 					

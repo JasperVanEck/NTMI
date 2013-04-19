@@ -52,6 +52,7 @@ public class Main{
 		//nGram.writeTopFrequencies();
 		//nGram.printSumFrequencies();
 		//nGram.printTopFrequencies();
+		
 		/* Run the probability calculator here */
 		ProbabilityCalculator probCalc = new ProbabilityCalculator(additionalFile, fileName, n);
 		//probCalc.calculate();
