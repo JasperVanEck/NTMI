@@ -55,7 +55,7 @@ public class Main{
 		/* Run the probability calculator here */
 		ProbabilityCalculator probCalc = new ProbabilityCalculator(additionalFile, fileName, n);
 		//probCalc.calculate();
-		probCalc.calculateArbitrary();
+		probCalc.calculateArbitraryAddOneSmoothed();
 		probCalc.printTopTwoProbabilities();
 	}
 }

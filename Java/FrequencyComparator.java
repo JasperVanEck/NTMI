@@ -1,5 +1,5 @@
 /* Floris de Bruin(5772583), Gijs van Horn(10070370) en Jasper van Eck(6228194)
- * FrequencyComparator allows us to check if a certain entry in the HashMap is larger, 
+ * FrequencyComparator allows us to check if a certain entry in the TreeMap is larger, 
  * than the other.
  */
 
@@ -9,7 +9,7 @@ class FrequencyComparator implements Comparator<String> {
 
 	private Map<String, Integer> base;
 	//constructor
-	public FrequencyComparator(HashMap<String, Integer> base) {
+	public FrequencyComparator(TreeMap<String, Integer> base) {
 		this.base = base;
 	}
 

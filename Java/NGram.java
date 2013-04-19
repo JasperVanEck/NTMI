@@ -10,7 +10,7 @@ import java.io.*;
 
 public class NGram{
 	
-	private HashMap<String, Integer> map = new HashMap<String, Integer>();
+	private TreeMap<String, Integer> map = new TreeMap<String, Integer>();
 	private TreeMap<String, Integer> sortedMap;
 	private FileManager manager;
 	private int nGramSize;
@@ -181,6 +181,24 @@ public class NGram{
 		}
 		System.out.println("Total of all frequencies: " + sum);
 	}
+	
+	/*
+	filterPrefix geeft een submap van de treemap met alle key-value pairs waarvan de keys de prefix bevatten.
+	*/
+	public SortedMap<String, Integer> filterPrefix(String prefix){
+		char nextLetter = (char)(prefix.charAt(prefix.length() - 1) + 1);
+		String end = prefix.substring(0, prefix.length() - 1) + nextLetter;
+		return this.map.subMap(prefix, end);
+	}
+	
+	public int countPrefix(String prefix){
+		SortedMap<String, Integer> submap = filterPrefix(prefix);
+		int counter = 0;
+		for (Map.Entry<String, Integer> entry: submap.entrySet()){
+			counter++;
+		}
+		return counter;
+	}
 
 	public void writeTopFrequencies(){
 		int i = 0;
@@ -211,6 +229,10 @@ public class NGram{
 	
 	public int getTotalSentences(){
 			return this.sentences;
+	}
+	
+	public boolean containsKey(String key){
+		return this.map.containsKey(key);
 	}
 	
 }

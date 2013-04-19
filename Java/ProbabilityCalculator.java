@@ -111,6 +111,68 @@ public class ProbabilityCalculator{
 		}
 	}
 	
+	public void calculateArbitraryAddOneSmoothed(){
+	
+		Pattern splitPoint = Pattern.compile(" ");
+		String nextLine = this.manager.readNextLine();			
+		
+		while(nextLine != null){
+			//nextLine = nextLine + " </s>";
+			for (int i = 1; i < this.n; i++){
+				nextLine = "<s> " + nextLine;
+			}
+			double probability = 1;
+			//System.out.println(nextLine);
+			String[] words = splitPoint.split(nextLine);
+			if(words.length - this.n > this.n){
+				
+				boolean firstrun = true;
+							
+				for(int i=this.n; i < words.length; i++ ){
+					String[] tempGramMinOne = Arrays.copyOfRange(words, i-this.n + 1, i);
+					String[] tempGram = Arrays.copyOfRange(words, i-this.n + 1, i+1);
+					
+					String shortSentence = ("" + Arrays.asList(tempGramMinOne)).replaceAll("(^.|.$)", "").replace(", ", " ");
+					String sentence = ("" + Arrays.asList(tempGram)).replaceAll("(^.|.$)", "").replace(", ", " ");
+					
+					//System.out.println("shortsentence is: " + shortSentence);
+					//System.out.println("sentence is: " + sentence);
+					
+					
+					double freq2 = this.nGrams[0].countPrefix(shortSentence);
+					double freq1 = 1;
+					
+					if(this.nGrams[0].containsKey(sentence)){
+						freq1 += this.nGrams[0].getValue(sentence);
+					}
+					
+					if(firstrun){
+						 freq2 += this.nGrams[1].getTotalSentences();
+						 firstrun = false;
+					}else{
+						if(this.nGrams[1].containsKey(shortSentence)){
+							freq2 += this.nGrams[1].getValue(shortSentence);
+						}
+					}
+					
+					probability = probability * (freq1/freq2);
+					//System.out.println(probability);
+					
+					
+				}
+				System.out.printf("The probability for sentence: '%s' is: %e \n", nextLine, probability);
+				addToMap(nextLine, probability);
+				nextLine = this.manager.readNextLine();
+			}else{
+				//System.out.println("The sentence was too short for the ngram size");
+				nextLine = this.manager.readNextLine();
+			}
+		
+		}
+	}
+	
+	
+	
 	public void addToMap(String sentence, double prob){
 		sortedSentences.put(prob, sentence);
 	}
