@@ -29,8 +29,6 @@ public class NGram{
 		this.manager = new FileManager(inputFile);
 		computeNGramsWithDummySymbols();
 		sortMap();
-		
-		
 	}
 	
 	/*
@@ -206,11 +204,24 @@ public class NGram{
 	}
 	
 	public int getValue(String key){
-			return this.map.get(key);			
+		return this.map.get(key);			
 	}
 	
 	public int getTotalSentences(){
-			return this.sentences;
+		return this.sentences;
+	}
+	
+	public TreeMap<String, Integer> getSortedMap(){
+		return this.sortedMap;
+	}
+	
+	public double getBigN(){
+		double bigN = 0;
+		for (Map.Entry<String,Integer> entry : sortedMap.entrySet()){
+			bigN += entry.getValue();
+		}
+		
+		return bigN;
 	}
 	
 }
