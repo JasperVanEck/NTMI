@@ -16,6 +16,7 @@ public class NGram{
 	private int nGramSize;
 	private int m;
 	private int sentences;
+	private int startSymbolCount=0;
 
 	/*
 	Constructor voor nGram, specificeer welke corpus gebruikt wordt en welke orde n-grams berekend worden.
@@ -64,6 +65,7 @@ public class NGram{
 			if (nextLine.matches(".*\\w.*")){
 				nextLine = nextLine.trim().replaceAll(" +"," ");				
 				nextLine = nextLine.replace("<s> ", startsymbols);
+				startSymbolCount++;
 				if(nextLine.contains("</s>")){
 					this.sentences++;
 				}
@@ -213,6 +215,14 @@ public class NGram{
 	
 	public TreeMap<String, Integer> getSortedMap(){
 		return this.sortedMap;
+	}
+	
+	public HashMap<String, Integer> getHashMap(){
+		return this.map;
+	}
+	
+	public double getStartSymbolCount(){
+		return startSymbolCount;
 	}
 	
 	public double getBigN(){

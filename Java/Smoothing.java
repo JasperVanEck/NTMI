@@ -6,53 +6,88 @@ import java.util.regex.*;
 
 public class Smoothing {
 
-	TreeMap<String, Integer> NGrams;
-	TreeMap<String, Integer> NGramsAddOne = new TreeMap<String, Integer>();
-	TreeMap<String, Double> NGramsSmoothed = new TreeMap<String, Double>();
-	double bigN;
+	HashMap<String, Integer> nGrams;
+	HashMap<String, Integer> nGramsMinOne;
+	HashMap<String, Double> nGramsAddOnePoss = new HashMap<String, Double>();
+	double bigN, startSymbolCount;
+	long startTime, endTime, time;
 
 	public static void main(String[] args){
 		Smoothing smooth = new Smoothing("austen.txt");
 	}
 	
 	public Smoothing(String corpus){
+
+				startTime = System.currentTimeMillis();
+		
 		NGram analyzer = new NGram(corpus, 2);
-		NGrams = analyzer.getSortedMap();
-		writeToFile();
-		bigN = analyzer.getBigN();
-		//System.out.println(bigN);
-		//addOneSmoothing();		
+		nGrams = analyzer.getHashMap();
+		
+		writeToFile(nGrams, "nGrams.txt");
+		
+		NGram analyzerMinOne = new NGram(corpus, 1);
+		nGramsMinOne = analyzerMinOne.getHashMap();
+		
+		writeToFile(nGramsMinOne, "nGramsMinOne.txt");
+		
+				endTime   = System.currentTimeMillis();
+				time = endTime - startTime;
+				System.out.println("Create nGrams time: " + time);
+		
+				startTime = System.currentTimeMillis();
+		addOneSmoothing();
+				endTime   = System.currentTimeMillis();
+				time = endTime - startTime;
+				System.out.println("Smoothing Calculation: " + time);
+		
+		writeToFile(nGramsAddOnePoss, "smoothed.txt");
+		
 	}
 	
 	public void addOneSmoothing(){	
-		for (Map.Entry<String,Integer> entry : NGrams.entrySet()){
-			NGramsAddOne.put(entry.getKey(),entry.getValue() + 1);
-		}
-		
-		for (Map.Entry<String,Integer> entry : NGrams.entrySet()){
+	
+		for (Map.Entry<String,Integer> entry : nGrams.entrySet()){
 			//get first word of bigram by splitting at spaces and returning the first entry of the array crated by the split.
 			String prefix = entry.getKey().split("\\s+")[0];
-			double occurences = findOccurences(prefix);
-			double valueOfKey = 1;
+			//System.out.println(entry.getKey());
+			//System.out.println(prefix);
+			double nMinOneCount = nGramsMinOne.size();
+			double prefixCount;
 			
-			if(NGramsAddOne.containsKey(entry.getKey())){
-				valueOfKey = NGramsAddOne.get(entry.getKey());
+			if(prefix.equals("null")){
+				continue;
 			}
-			double smoothedValue = valueOfKey / occurences;
-			NGramsSmoothed.put(entry.getKey(), smoothedValue);
+			
+			if(prefix.equals("<s>"))
+			{
+				prefixCount = startSymbolCount;
+			} else {
+				prefixCount = nGramsMinOne.get(prefix);
+			}
+			double underDivider = nMinOneCount + prefixCount;
+			
+			double aboveDivider = 1;
+			
+			if(nGrams.containsKey(entry.getKey())){
+				aboveDivider = nGrams.get(entry.getKey()) + 1;
+			}
+			
+			double poss = aboveDivider / underDivider;			
+			
+			nGramsAddOnePoss.put(entry.getKey(), poss);
 		}
-		System.out.println(NGramsSmoothed);
 	}
-	
+	/**
 	public double findOccurences(String prefix){
 		double totalOccurences = 0;
-		for (Map.Entry<String,Integer> entry : NGramsAddOne.entrySet()){
+		for (Map.Entry<String,Integer> entry : nGrams.entrySet()){
 			if (entry.getKey().contains(prefix + " ")){
-				totalOccurences += entry.getValue();
+				totalOccurences += entry.getValue() + 1;
 			}
 		}
 		return totalOccurences;
 	}
+	**/
 	
 	public int goodTuring(int r, int k) {
 		/**
@@ -70,10 +105,10 @@ public class Smoothing {
 		return mass;
 	}
 	
-	private void writeToFile(){
-		Iterator it = NGrams.entrySet().iterator();
+	private void writeToFile(HashMap map, String fileName){
+		Iterator it = map.entrySet().iterator();
 		try{
-			FileWriter fstream = new FileWriter("austen_2grams.txt");
+			FileWriter fstream = new FileWriter(fileName);
 			BufferedWriter out = new BufferedWriter(fstream);
 
 			while(it.hasNext()){
