@@ -148,7 +148,7 @@ public class NGram{
 					tags[j] = sentence[i + j][1];
 				}
 				addToMap(Arrays.toString(tags));
-				addToMapWords(sentence[1] + sentence[0]);
+				addToMapWords(Arrays.toString(sentence[1]) + Arrays.toString(sentence[0]));
 			}
 			
 			sentence = this.manager.readNextSentence();
