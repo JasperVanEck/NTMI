@@ -47,6 +47,7 @@ public class FileManager {
 	
 	public void writeToFile(String data) {
 		try {
+			//System.out.println("Writing: " + data);
 			this.writerOut.write(data + "\n");
 		} catch (IOException e) {
 			System.out.println("There was a problem writing to the file");

@@ -72,8 +72,8 @@ public class Smoothing {
 			} else {
 				prefixCount = nGramsMinOne.get(prefix);
 			}
-			double underDivider = nMinOneCount + prefixCount;
 			
+			double underDivider = nMinOneCount + prefixCount;
 			double aboveDivider = 1;
 			
 			if(nGrams.containsKey(entry.getKey())){
@@ -82,11 +82,12 @@ public class Smoothing {
 			
 			double poss = aboveDivider / underDivider;			
 			
-			nGramsAddOnePoss.put(entry.getKey(), poss);
+			this.nGramsAddOnePoss.put(entry.getKey(), poss);
 		}
+		
 	}
 	
-	public double goodTuring(int k) {
+	public void goodTuring(int k) {
 		
 		int[] counts = getNCounts(k);
 		double[] adjustedCounts = new double[k+1];
@@ -116,7 +117,7 @@ public class Smoothing {
 		
 		}
 		
-		HashMap<String, Double> nGramsGoodTuringPoss = new HashMap<String, Double>();
+		this.nGramsGoodTuringPoss = new HashMap<String, Double>();
 		
 		//fill the hashmap with conditional probabilities for each bigram.
 		for(Map.Entry<String,Integer> entry : nGrams.entrySet()){
@@ -141,11 +142,14 @@ public class Smoothing {
 			}
 			
 			poss = adjustedCount/unigramCount;
-			nGramsGoodTuringPoss.put(bigram, poss);
+			this.nGramsGoodTuringPoss.put(bigram, poss);
 		
 		}
-		//writeToFile(nGramsGoodTuringPoss, "GoodTuringPoss.txt");
-		return 0;
+		
+		this.nGramsGoodTuringPoss.put("dummy", adjustedCounts[0]/(double)nGrams.size());
+		
+		//writeToFile(this.nGramsGoodTuringPoss, "GoodTuringPoss.txt");
+		
 	}
 	
 	public int[] getNCounts(int k){
@@ -162,6 +166,30 @@ public class Smoothing {
 	public int getCountFreq(int freq){
 		return 0;
 	
+	}
+	
+	public double getAddOnePoss(String bigram){
+		if(nGramsAddOnePoss.containsKey(bigram)){	
+			return nGramsAddOnePoss.get(bigram);
+		}else{
+			String prefix = bigram.split("\\s+")[0];
+			if(nGramsMinOne.containsKey(prefix)){
+				return 1/ (nGramsMinOne.size() + nGramsMinOne.get(prefix));
+			}else{
+				return 1/ (nGramsMinOne.size()	+ 1);
+			}
+		}
+	}
+	
+	
+	public double getGoodTuringPoss(String bigram){
+		
+		//System.out.println(bigram);
+		if(this.nGramsGoodTuringPoss.containsKey(bigram)){
+			return this.nGramsGoodTuringPoss.get(bigram);
+		}else{
+			return this.nGramsGoodTuringPoss.get("dummy");
+		}	
 	}
 	
 	

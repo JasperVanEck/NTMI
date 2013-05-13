@@ -53,9 +53,10 @@ public class Main{
 		//nGram.printSumFrequencies();
 		//nGram.printTopFrequencies();
 		/* Run the probability calculator here */
-		ProbabilityCalculator probCalc = new ProbabilityCalculator(additionalFile, fileName, n);
+		ProbabilityCalculator probCalc = new ProbabilityCalculator("austen_test_big.txt");
+		probCalc.calculateSmoothed();
 		//probCalc.calculate();
-		probCalc.calculateArbitrary();
-		probCalc.printTopTwoProbabilities();
+		//probCalc.calculateArbitrary();
+		//probCalc.printTopTwoProbabilities();
 	}
 }
