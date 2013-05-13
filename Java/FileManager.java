@@ -124,7 +124,7 @@ public class FileManager {
 		}
 	}
 	
-	public Object[] readNextSentence() {
+	public ArrayList<String[]> readNextSentence() {
 		ArrayList<String[]> sentence = new ArrayList<String[]>();
 		String lastWord = "";
 		
@@ -132,7 +132,7 @@ public class FileManager {
 			try {
 				String currentLine = readerIn.readLine();
 				if (currentLine.isEmpty()){
-					System.out.println("Empty Sentence");
+// 					System.out.println("Empty Sentence");
 					continue;
 				}
 				String[] currentLineArray = currentLine.split(" ");
@@ -141,15 +141,15 @@ public class FileManager {
 				for (String elem : currentLineArray)
 				{
 					if (elem.equals("./.") || elem.equals("\\=+")) {
-						System.out.println("==================== + " + elem);
+// 						System.out.println("==================== + " + elem);
 						lastWord = elem;
 					} else {
 						String[] splitWordPos = elem.split("/");
 						if(splitWordPos.length == 2){
-							System.out.println(splitWordPos[0] + "/" + splitWordPos[1]);
-							System.out.println(splitWordPos.length);
+// 							System.out.println(splitWordPos[0] + "/" + splitWordPos[1]);
+// 							System.out.println(splitWordPos.length);
 							if (splitWordPos[1].matches("[A-Za-z0-9]*")){
-								System.out.println("Added to Sentence");
+// 								System.out.println("Added to Sentence");
 								sentence.add(splitWordPos);
 							}
 						}
@@ -159,9 +159,9 @@ public class FileManager {
 				System.out.println("Something went wrong" + e);
 			}
 		} //endWhile
-		Object[] completeSentence = sentence.toArray();
-		System.out.println(Arrays.deepToString(completeSentence));
-		return completeSentence;
+		//Object[] completeSentence = sentence.toArray();
+// 		System.out.println(Arrays.deepToString(completeSentence));
+		return sentence;
 	}
 
 	//Closes the file reader and writer.	

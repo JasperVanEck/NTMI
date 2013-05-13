@@ -13,6 +13,7 @@ public class NGram{
 	private HashMap<String, Integer> map = new HashMap<String, Integer>();
 	private HashMap<String, Integer> mapWords = new HashMap<String, Integer>();
 	private TreeMap<String, Integer> sortedMap;
+	private TreeMap<String, Integer> sortedMapWords;
 	private FileManager manager;
 	private int nGramSize;
 	private int m;
@@ -22,23 +23,28 @@ public class NGram{
 	/*
 	Constructor voor nGram, specificeer welke corpus gebruikt wordt en welke orde n-grams berekend worden.
 	*/
-	public NGram(String inputFile, int n) {
+	public NGram(String inputFile, int n, boolean pos) {
 		nGramSize = n;
 		this.sentences = 0;
 		String inputFileName = inputFile.replaceFirst("\\.txt", "");
 		String outputFile = inputFileName + "_" + n + "grams.txt";
 				
 		this.manager = new FileManager(inputFile);
-		computeNGramsWithDummySymbols();
+		if(pos){
+			computeNGramsPOSTag();
+		}else{
+			computeNGramsWithDummySymbols();
+		}
 		sortMap();
+		sortMapWords();
 	}
 	
 	/*
 	Overloaded constructor, voor het specificeren hoeveel van de meest voorkomende nGrams geprint moeten worden.
 	*/
-	public NGram(String inputFile, int n, int m){
+	public NGram(String inputFile, int n, boolean pos, int m){
 		
-		this(inputFile, n);
+		this(inputFile, n, pos);
 		this.m = m;
 		//printSumFrequencies();
 	}
@@ -133,22 +139,24 @@ public class NGram{
 	}
 	
 	public void computeNGramsPOSTag(){
-		String sentence[][] = this.manager.readNextSentence();
+		ArrayList<String[]> sentence = this.manager.readNextSentence();
+
 		
-		while(sentence != null){
+		while(sentence.size() != 0){
+			
 			this.sentences++;
-			String[] tags = new String[this.nGramSize];
+			String tags = "";
 			String[] words = new String[2];
 			
-			int workLength = (sentence.length - this.nGramSize) + 1;
+			int workLength = (sentence.size() - this.nGramSize) + 1;
 			
-			for(int i = 0; i <= workLength; i++){
-				
-				for(int j = 0; j < tags.length; j++){
-					tags[j] = sentence[i + j][1];
+			for(int i = 0; i < workLength; i++){
+				tags = "";
+				for(int j = 0; j < this.nGramSize; j++){
+					tags = tags + " " + sentence.get(i + j)[1];
 				}
-				addToMap(Arrays.toString(tags));
-				addToMapWords(Arrays.toString(sentence[1]) + Arrays.toString(sentence[0]));
+				addToMap(tags);
+				addToMapWords(sentence.get(i)[1] + " " + sentence.get(i)[0]);
 			}
 			
 			sentence = this.manager.readNextSentence();
@@ -187,6 +195,18 @@ public class NGram{
 	
 	}
 	
+	/*
+	Sorteert de hashMap mapWords en zet deze in TreeMap sortedMapWords.
+	*/
+	public void sortMapWords(){
+		
+		FrequencyComparator comparator = new FrequencyComparator(this.mapWords);
+		this.sortedMapWords = new TreeMap<String, Integer>(comparator);
+		this.sortedMapWords.putAll(this.mapWords);
+	
+	}
+	
+	
 	public int getN(){
 		return this.nGramSize;
 	}
@@ -195,7 +215,7 @@ public class NGram{
 	Print de m meest voorkomende NGrams uit.
 	*/
 	public void printTopFrequencies(){
-		int i=0;
+		int i = 0;
 		Iterator entries = sortedMap.entrySet().iterator();
 		while(i < m && entries.hasNext()){
 			Map.Entry nGram = (Map.Entry) entries.next();
@@ -203,7 +223,21 @@ public class NGram{
 			i++;
 		}
 	}
-	
+
+	/*
+	Print de m meest voorkomende NGrams van words met pos tag combinaties uit.
+	*/
+	public void printTopFrequenciesWords(){
+		int i = 0;
+		Iterator entries = sortedMapWords.entrySet().iterator();
+		while(i < m && entries.hasNext()){
+			Map.Entry nGram = (Map.Entry) entries.next();
+			System.out.println(nGram.getKey() + " - " + nGram.getValue());
+			i++;
+		}
+	}
+
+
 	/*
 	Print de totale som van alle frequenties.
 	*/

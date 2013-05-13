@@ -16,8 +16,8 @@ public class ProbabilityCalculator{
 		this.n = n;
 		
 		this.nGrams = new NGram[2];
-		this.nGrams[0] = new NGram(corpusFile, n);
-		this.nGrams[1] = new NGram(corpusFile, n - 1);
+		this.nGrams[0] = new NGram(corpusFile, n, false);
+		this.nGrams[1] = new NGram(corpusFile, n - 1, false);
 		
 		this.manager = new FileManager(addFile);
 	}

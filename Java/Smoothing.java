@@ -22,12 +22,12 @@ public class Smoothing {
 
 				startTime = System.currentTimeMillis();
 		
-		NGram analyzer = new NGram(corpus, 2);
+		NGram analyzer = new NGram(corpus, 2, false);
 		nGrams = analyzer.getHashMap();
 		startSymbolCount = analyzer.getStartSymbolCount();
 		//writeToFile(nGrams, "nGrams.txt");
 		
-		NGram analyzerMinOne = new NGram(corpus, 1);
+		NGram analyzerMinOne = new NGram(corpus, 1, false);
 		nGramsMinOne = analyzerMinOne.getHashMap();
 		
 				endTime   = System.currentTimeMillis();

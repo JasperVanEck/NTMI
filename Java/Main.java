@@ -48,13 +48,14 @@ public class Main{
 
 		System.out.printf("N: %d \nFilename: %s\nAdditional file: %s\n", n, fileName, additionalFile);
 		/* Run the NGramMaker class here */
-		//NGram nGram = new NGram(fileName, n, m);
+		NGram nGram = new NGram("WSJ02-21.pos", 3, true, m);
 		//nGram.writeTopFrequencies();
 		//nGram.printSumFrequencies();
-		//nGram.printTopFrequencies();
+		nGram.printTopFrequencies();
+		nGram.printTopFrequenciesWords();
 		/* Run the probability calculator here */
-		ProbabilityCalculator probCalc = new ProbabilityCalculator("austen_test_big.txt");
-		probCalc.calculateSmoothed();
+		//ProbabilityCalculator probCalc = new ProbabilityCalculator("austen_test_big.txt");
+		//probCalc.calculateSmoothed();
 		//probCalc.calculate();
 		//probCalc.calculateArbitrary();
 		//probCalc.printTopTwoProbabilities();
