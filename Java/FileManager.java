@@ -15,6 +15,14 @@ public class FileManager {
 	private int sizeIn;
 	private String nextReadSentence;
 	
+	public static void main(String[] args){
+		FileManager test = new FileManager("WSJ02-21.pos");
+		test.readNextSentence();
+		test.readNextSentence();
+		test.readNextSentence();
+		
+	}
+	
 	//Default constructor, only creates a file reader.
 	public FileManager(String fileIn) {
 		this.fileIn = fileIn;
@@ -114,6 +122,46 @@ public class FileManager {
 			System.err.println("There was an error reading from file " + fileIn);
 			return "";
 		}
+	}
+	
+	public Object[] readNextSentence() {
+		ArrayList<String[]> sentence = new ArrayList<String[]>();
+		String lastWord = "";
+		
+		while (!lastWord.equals("./.") && !lastWord.equals("\\=+")) {
+			try {
+				String currentLine = readerIn.readLine();
+				if (currentLine.isEmpty()){
+					System.out.println("Empty Sentence");
+					continue;
+				}
+				String[] currentLineArray = currentLine.split(" ");
+				//System.out.println(currentline);
+				
+				for (String elem : currentLineArray)
+				{
+					if (elem.equals("./.") || elem.equals("\\=+")) {
+						System.out.println("==================== + " + elem);
+						lastWord = elem;
+					} else {
+						String[] splitWordPos = elem.split("/");
+						if(splitWordPos.length == 2){
+							System.out.println(splitWordPos[0] + "/" + splitWordPos[1]);
+							System.out.println(splitWordPos.length);
+							if (splitWordPos[1].matches("[A-Za-z0-9]*")){
+								System.out.println("Added to Sentence");
+								sentence.add(splitWordPos);
+							}
+						}
+					}
+				}
+			} catch (Exception e) {
+				System.out.println("Something went wrong" + e);
+			}
+		} //endWhile
+		Object[] completeSentence = sentence.toArray();
+		System.out.println(Arrays.deepToString(completeSentence));
+		return completeSentence;
 	}
 
 	//Closes the file reader and writer.	
