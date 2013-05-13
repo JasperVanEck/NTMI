@@ -52,6 +52,7 @@ public class Main{
 		//nGram.writeTopFrequencies();
 		//nGram.printSumFrequencies();
 		//nGram.printTopFrequencies();
+		
 		/* Run the probability calculator here */
 		ProbabilityCalculator probCalc = new ProbabilityCalculator("austen_test_big.txt");
 		probCalc.calculateSmoothed();

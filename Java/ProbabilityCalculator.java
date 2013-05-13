@@ -207,6 +207,7 @@ public class ProbabilityCalculator{
 			}
 		
 		}
+
 		System.out.println("Percentage of zeros in unsmoothed:" + 100*(unSmoothedZeroCounter/sentenceCounter));
 		System.out.println("Percentage of zeros in Add One Smoothing:" + 100*(addOneZeroCounter/sentenceCounter));
 		System.out.println("Percentage of zeros in Good Turing Smoothing:" + 100*(goodTuringZeroCounter/sentenceCounter));
@@ -217,7 +218,6 @@ public class ProbabilityCalculator{
 			System.out.println(e);
 		}
 	}
-	
 	
 	public void addToMap(String sentence, double prob){
 		sortedSentences.put(prob, sentence);
