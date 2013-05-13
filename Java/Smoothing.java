@@ -14,20 +14,20 @@ public class Smoothing {
 	long startTime, endTime, time;
 
 	public static void main(String[] args){
-		Smoothing smooth = new Smoothing("austen.txt");
+		Smoothing smooth = new Smoothing("austen.txt", false);
 		
 	}
 	
-	public Smoothing(String corpus){
+	public Smoothing(String corpus, boolean pos){
 
 				startTime = System.currentTimeMillis();
 		
-		NGram analyzer = new NGram(corpus, 2, false);
+		NGram analyzer = new NGram(corpus, 3, pos);
 		nGrams = analyzer.getHashMap();
 		startSymbolCount = analyzer.getStartSymbolCount();
 		//writeToFile(nGrams, "nGrams.txt");
 		
-		NGram analyzerMinOne = new NGram(corpus, 1, false);
+		NGram analyzerMinOne = new NGram(corpus, 2, pos);
 		nGramsMinOne = analyzerMinOne.getHashMap();
 		
 				endTime   = System.currentTimeMillis();
@@ -35,19 +35,19 @@ public class Smoothing {
 				System.out.println("Create nGrams time: " + time);
 		
 				startTime = System.currentTimeMillis();
-		goodTuring(5);
+		goodTuring(4);
 				endTime   = System.currentTimeMillis();
 				time = endTime - startTime;
 				System.out.println("Good Turing Smoothing Calculation time: " + time);
 	
 		//writeToFile(nGramsMinOne, "nGramsMinOne.txt");
-		
+		/*
 				startTime = System.currentTimeMillis();
 		addOneSmoothing();
 				endTime   = System.currentTimeMillis();
 				time = endTime - startTime;
 				System.out.println("Add-One Smoothing Calculation time: " + time);
-		
+		*/
 		//writeToFile(nGramsAddOnePoss, "smoothed.txt");
 		
 	}
