@@ -219,8 +219,8 @@ public class ProbabilityCalculator{
 	}
 	
 	/**
-	This function performs probability calculations on sentences which are each one on their own line.
-	It writes the unsmoothed, add-one smoothed and Good-Turing smoothed probabilities to the file evaluated_sentences.txt.
+	This function performs probability calculations on sentences.
+	Good-Turing smoothed probabilities to the file evaluated_sentences.txt.
 	**/
 	public void calculateSmoothedPOS(){
 		ArrayList<String[]> nextLine = this.manager.readNextSentence();
