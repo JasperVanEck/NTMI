@@ -23,7 +23,7 @@ public class ProbabilityCalculator{
 	}
 	
 	public ProbabilityCalculator(String testFile){
-		this.n = 2;
+		this.n = 3;
 		this.smoother = new Smoothing("WSJ02-21.pos", true);
 		this.manager = new FileManager(testFile, "evaluated_sentences.txt");
 	}
@@ -219,14 +219,57 @@ public class ProbabilityCalculator{
 	}
 	
 	/**
-	This function performs probability calculations on sentences which are each one on their own line.
-	It writes the unsmoothed, add-one smoothed and Good-Turing smoothed probabilities to the file evaluated_sentences.txt.
+	This function performs probability calculations on sentences.
+	Good-Turing smoothed probabilities to the file evaluated_sentences.txt.
 	**/
 	public void calculateSmoothedPOS(){
-		ArrayList<String[]> sentence = manager.readNextSentence();
-		Object[] completeSentence = sentence.toArray();
-		System.out.println(Arrays.deepToString(completeSentence));
+		ArrayList<String[]> nextLine = this.manager.readNextSentence();
 		
+		int size = nextLine.size();
+		double probabilityGoodTuring = 1;
+		
+		while(size != 0){
+			String[] tags = new String[size];
+			String[] words = new String[size];
+			
+			for(int i = 0; i < size; i++){
+				words[i] = nextLine.get(i)[0];
+				//Get most likely tag of word & put in tags[i].
+			}
+			
+			for(int i = 0; i < size; i++){
+				//calculate probability for the tag sequence.
+				String sequence = tags[i]
+				for(int j = 1; j < this.n; j++){
+					sequence = sequence + " " + tags[i + j];
+				}
+				probabilityGoodTuring = probabilityGoodTuring * smoother.getGoodTuringPoss(sequence);
+			}
+			
+			String posSeq = tags[0];
+			String sentence = words[0];
+			
+			for(int i = 1; i < size; i++){
+				posSeq = posSeq + " " + tags[i];
+				sentence = sentence + " " + words[i];
+			}
+			
+			this.manager.writeToFile("The most likely PoS tag sequence for sentence: '" + sentence + "' is: '" + posSeq + "'.");
+			this.manager.writeToFile("The probability for this sentence is: " + probabilityGoodTuring);
+			
+			nextLine = this.manager.readNextSentence();
+			size = nextLine.size();
+		}
+		
+		
+		System.out.println("Percentage of zeros in unsmoothed:" + 100*(unSmoothedZeroCounter/sentenceCounter));
+		System.out.println("Percentage of zeros in Good Turing Smoothing:" + 100*(goodTuringZeroCounter/sentenceCounter));
+		
+		try{
+			this.manager.terminate();
+		}catch(Exception e){
+			System.out.println(e);
+		}
 	}
 
 
