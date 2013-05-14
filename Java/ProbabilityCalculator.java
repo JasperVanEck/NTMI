@@ -234,14 +234,11 @@ public class ProbabilityCalculator{
 		
 		while(nextLine.size() != 0){
 			//nextLine = nextLine + " </s>";
-			for (int i = 1; i < this.n; i++){
-				nextLine = "<s> " + nextLine;
-			}
+// 			for (int i = 1; i < this.n; i++){
+// 				nextLine = "<s> " + nextLine;
+// 			}
 			double probability = 1;
-			double probabilityAddOne = 1;
 			double probabilityGoodTuring = 1;
-			
-			
 			
 			nextLine = nextLine.replaceAll("\\s+", " ");
 			
@@ -281,8 +278,6 @@ public class ProbabilityCalculator{
 					probability = probability * (freq1/freq2);
 					//System.out.println(probability);
 					
-					probabilityAddOne = probabilityAddOne * smoother.getAddOnePoss(sentence);
-					
 					probabilityGoodTuring = probabilityGoodTuring * smoother.getGoodTuringPoss(sentence);
 					
 					
@@ -291,14 +286,12 @@ public class ProbabilityCalculator{
 				sentenceCounter++;
 				
 				if(probability == 0.0){unSmoothedZeroCounter++;}
-				if(probabilityAddOne == 0.0){addOneZeroCounter++;}
 				if(probabilityGoodTuring == 0.0){goodTuringZeroCounter++;}
 				
 				
 				
 				//System.out.printf("The probability for sentence: '%s' is: %e \n", nextLine, probability);
 				this.manager.writeToFile("The probability without smoothing for: '" + nextLine + "' is:" + probability);
-				this.manager.writeToFile("The probability with Add One smoothing is: " + probabilityAddOne); 
 				this.manager.writeToFile("The probability with Good Turing smoothing: " + probabilityGoodTuring + "\n");
 				//addToMap(nextLine, probability);
 				nextLine = this.manager.readNextSentence();
@@ -309,7 +302,6 @@ public class ProbabilityCalculator{
 		
 		}
 		System.out.println("Percentage of zeros in unsmoothed:" + 100*(unSmoothedZeroCounter/sentenceCounter));
-		System.out.println("Percentage of zeros in Add One Smoothing:" + 100*(addOneZeroCounter/sentenceCounter));
 		System.out.println("Percentage of zeros in Good Turing Smoothing:" + 100*(goodTuringZeroCounter/sentenceCounter));
 		
 		try{

@@ -11,9 +11,9 @@ import java.io.*;
 public class NGram{
 	
 	private HashMap<String, Integer> map = new HashMap<String, Integer>();
-	private HashMap<String, Integer> mapWords = new HashMap<String, Integer>();
+	private HashMap<String, Integer> mapWordsTags = new HashMap<String, Integer>();
+	private HashMap<String, Integer> mapTagsWords = new HashMap<String, Integer>();
 	private TreeMap<String, Integer> sortedMap;
-	private TreeMap<String, Integer> sortedMapWords;
 	private FileManager manager;
 	private int nGramSize;
 	private int m;
@@ -156,7 +156,8 @@ public class NGram{
 					tags = tags + " " + sentence.get(i + j)[1];
 				}
 				addToMap(tags);
-				addToMapWords(sentence.get(i)[1] + " " + sentence.get(i)[0]);
+				addToMapTagsWords(sentence.get(i)[1] + " " + sentence.get(i)[0]);
+				addToMapWordsTags(sentence.get(i)[0] + " " + sentence.get(i)[1]);
 			}
 			
 			sentence = this.manager.readNextSentence();
@@ -176,12 +177,21 @@ public class NGram{
 		}
 	}
 	
-	public void addToMapWords(String nGram){
-		if(this.mapWords.containsKey(nGram)){
-			int currentValue = this.mapWords.get(nGram);
-			this.mapWords.put(nGram, currentValue+1);
+	public void addToMapTagsWords(String nGram){
+		if(this.mapTagsWords.containsKey(nGram)){
+			int currentValue = this.mapTagsWords.get(nGram);
+			this.mapTagsWords.put(nGram, currentValue+1);
 		}else{
-			this.mapWords.put(nGram, 1);
+			this.mapTagsWords.put(nGram, 1);
+		}
+	}
+
+	public void addToMapWordsTags(String nGram){
+		if(this.mapWordsTags.containsKey(nGram)){
+			int currentValue = this.mapWordsTags.get(nGram);
+			this.mapWordsTags.put(nGram, currentValue+1);
+		}else{
+			this.mapWordsTags.put(nGram, 1);
 		}
 	}
 	/*
