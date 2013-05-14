@@ -240,7 +240,7 @@ public class NGram{
 	*/
 	public void addToMap(String nGram, Map<String, Integer> map){
 		if(map.containsKey(nGram)){
-			int currentValue = this.map.get(nGram);
+			int currentValue = map.get(nGram);
 			map.put(nGram, currentValue+1);
 		}else{
 			map.put(nGram, 1);
