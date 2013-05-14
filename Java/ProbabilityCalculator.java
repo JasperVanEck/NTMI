@@ -227,6 +227,8 @@ public class ProbabilityCalculator{
 		
 		int size = nextLine.size();
 		double probabilityGoodTuring = 1;
+		NGram ngram = new NGram("WSJ02-21.pos");
+		HashMap<String, Map<String, Integer>> wordsTagsCount = ngram.createWordsDictionaryWithPosTagsAndCount();
 		
 		while(size != 0){
 			String[] tags = new String[size];
@@ -235,6 +237,7 @@ public class ProbabilityCalculator{
 			for(int i = 0; i < size; i++){
 				words[i] = nextLine.get(i)[0];
 				//Get most likely tag of word & put in tags[i].
+				
 			}
 			
 			for(int i = 0; i < size; i++){
