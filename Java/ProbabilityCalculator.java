@@ -230,14 +230,16 @@ public class ProbabilityCalculator{
 		NGram ngram = new NGram("WSJ02-21.pos");
 		Map<String, Map<String, Integer>> wordsTagsCount = ngram.createWordsDictionaryWithPosTagsAndCount();
 		
-		while(size != 0){
+		while(nextLine != null){
 			String[] tags = new String[size];
 			String[] words = new String[size];
 			
+			// Misschien losse functie
 			for(int i = 0; i < size; i++){
 				words[i] = nextLine.get(i)[0];
 				//Get most likely tag of word & put in tags[i].
 				Map<String, Integer> tagsCount= wordsTagsCount.get(words[i]);
+				
 				Iterator entries = tagsCount.keySet().iterator();
 				
 				int count = 0;

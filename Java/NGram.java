@@ -12,6 +12,7 @@ public class NGram{
 	
 	private HashMap<String, Integer> map = new HashMap<String, Integer>();
 	private HashMap<String, Integer> mapWords = new HashMap<String, Integer>();
+	private HashMap<String, Integer> completeTagCount = new HashMap<String, Integer>();
 	private Map<String, Map<String, Integer>> wordsWithPosTagCount = new HashMap<String, Map<String, Integer>>();
 	private TreeMap<String, Integer> sortedMap;
 	private FileManager manager;
@@ -127,7 +128,7 @@ public class NGram{
 						nGram = nGram + " " + lastWord;
 						//System.out.println(words[i+j]);
 					}
-					addToMap(nGram);
+					addToMap(nGram, this.map);
 				}
 
 				if(Arrays.asList(words).contains("</s>")){
@@ -169,7 +170,7 @@ public class NGram{
 					tempNGram += sentence.get(from+i)[0] + " ";
 				}
 				tempNGram = tempNGram.substring(0, tempNGram.length() - 1);
-				addToMap(tempNGram);
+				addToMap(tempNGram, this.map);
 				tempNGram="";
 			}
 			sentence = this.manager.readNextSentence();
@@ -188,6 +189,7 @@ public class NGram{
 			for(String[] elem : sentence){
 				//System.out.println(Arrays.toString(elem));
 				addPosTagToWord(elem[0],elem[1]);
+				addToMap(elem[1], completeTagCount);
 			}
 			sentence = this.manager.readNextSentence();
 		}
@@ -225,16 +227,23 @@ public class NGram{
 		wordsWithPosTagCount.put(word, tagsWithCount);
 	}
 	
+	/**
+	* getCompleteTagCount() returns the hashmap containing the counts of all tags in the corpus.
+	* This hashmap is made by createWordsDictionaryWithPosTagsAndCount-function.
+	**/
+	public HashMap<String, Integer> getCompleteTagCount(){
+		return completeTagCount;
+	}
 	
 	/*
 	Voegt string nGram toe aan de HashMap, als deze al voorkomt wordt de value opgehoogd anders nieuw toegevoegd met frequency 1.
 	*/
-	public void addToMap(String nGram){
-		if(this.map.containsKey(nGram)){
+	public void addToMap(String nGram, Map<String, Integer> map){
+		if(map.containsKey(nGram)){
 			int currentValue = this.map.get(nGram);
-			this.map.put(nGram, currentValue+1);
+			map.put(nGram, currentValue+1);
 		}else{
-			this.map.put(nGram, 1);
+			map.put(nGram, 1);
 		}
 	}
 
