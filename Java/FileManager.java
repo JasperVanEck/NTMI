@@ -127,14 +127,20 @@ public class FileManager {
 	public ArrayList<String[]> readNextSentence() {
 		ArrayList<String[]> sentence = new ArrayList<String[]>();
 		String lastWord = "";
-		
+
 		while (!lastWord.equals("./.") && !lastWord.equals("\\=+")) {
 			try {
 				String currentLine = readerIn.readLine();
 				if (currentLine.isEmpty()){
-// 					System.out.println("Empty Sentence");
+ 					//System.out.println("Empty Sentence");
 					continue;
 				}
+				
+				if(currentLine == null){
+					System.out.println("Returning null");
+					return null;
+				}
+				
 				String[] currentLineArray = currentLine.split(" ");
 				//System.out.println(currentline);
 				
@@ -156,7 +162,8 @@ public class FileManager {
 					}
 				}
 			} catch (Exception e) {
-				System.out.println("Something went wrong" + e);
+				return null;
+				//System.out.println("Something went wrong" + e);
 			}
 		} //endWhile
 		//Object[] completeSentence = sentence.toArray();

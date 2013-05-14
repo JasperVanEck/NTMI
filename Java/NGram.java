@@ -11,6 +11,8 @@ import java.io.*;
 public class NGram{
 	
 	private HashMap<String, Integer> map = new HashMap<String, Integer>();
+	private HashMap<String, Integer> mapWords = new HashMap<String, Integer>();
+	private Map<String, Map<String, Integer>> wordsWithPosTagCount = new HashMap<String, Map<String, Integer>>();
 	private TreeMap<String, Integer> sortedMap;
 	private FileManager manager;
 	private int nGramSize;
@@ -18,6 +20,13 @@ public class NGram{
 	private int sentences;
 	private int startSymbolCount=0;
 
+	
+	public static void main(String[] args){
+		NGram test = new NGram("WSJ02-21.pos", 3);
+		test.createWordsDictionaryWithPosTagsAndCount();
+		//test.computeNGramsPosTag();
+		//test.createWordsDictionaryWithPosTagsAndCount();
+	}
 	/*
 	Constructor voor nGram, specificeer welke corpus gebruikt wordt en welke orde n-grams berekend worden.
 	*/
@@ -29,12 +38,11 @@ public class NGram{
 				
 		this.manager = new FileManager(inputFile);
 		if(pos){
-			computeNGramsPOSTag();
+			computeNGramsPosTag();
 		}else{
 			computeNGramsWithDummySymbols();
 		}
 		sortMap();
-		sortMapWords();
 	}
 	
 	/*
@@ -45,6 +53,15 @@ public class NGram{
 		this(inputFile, n, pos);
 		this.m = m;
 		//printSumFrequencies();
+	}
+	
+	public NGram(String inputFile, int n){
+		this.manager = new FileManager(inputFile);
+		this.nGramSize = n;
+	}
+	
+	public NGram(String inputFile){
+		this.manager = new FileManager(inputFile);
 	}
 	
 	
@@ -135,29 +152,77 @@ public class NGram{
 		}
 
 	}
-	
-	public void computeNGramsPOSTag(){
+	/**
+	* computeNGramsPosTag() creates n-grams of each sentece of the give corpus
+	* (the n-size is definde in de constructor) and stores these in a map with
+	* their count, with the function add to map. This continues till the end of
+	* the file is reached, null.
+	**/
+	public void computeNGramsPosTag(){
 		ArrayList<String[]> sentence = this.manager.readNextSentence();
-		
-		while(sentence.size() != 0){
-			
-			this.sentences++;
-			String tags = "";
-			String[] words = new String[2];
-			
-			int workLength = (sentence.size() - this.nGramSize) + 1;
-			
-			for(int i = 0; i < workLength; i++){
-				tags = "";
-				for(int j = 0; j < this.nGramSize; j++){
-					tags = tags + " " + sentence.get(i + j)[1];
+		int amountOfNGrams = sentence.size() - (this.nGramSize - 1);
+		String tempNGram = "";
+		while(sentence != null){
+			amountOfNGrams = sentence.size() - (this.nGramSize - 1);
+			for(int from = 0; from < amountOfNGrams; from++){
+				for(int i = 0; i < this.nGramSize; i++){
+					tempNGram += sentence.get(from+i)[0] + " ";
 				}
-				addToMap(tags);
-
+				tempNGram = tempNGram.substring(0, tempNGram.length() - 1);
+				addToMap(tempNGram);
+				tempNGram="";
 			}
-			
 			sentence = this.manager.readNextSentence();
 		}
+	}
+	
+	/**
+	* createWordsDictionaryWithPosTagsAndCount(), is a function to loop through
+	* each sentence of the file given in the constructor and put the combinations
+	* in a hashmap with the help of addPosTagToWord() function.
+	**/
+	public Map<String, Map<String, Integer>> createWordsDictionaryWithPosTagsAndCount(){
+		ArrayList<String[]> sentence = this.manager.readNextSentence();
+		//System.out.println(sentence.size());
+		while(sentence != null){
+			for(String[] elem : sentence){
+				System.out.println(Arrays.toString(elem));
+				addPosTagToWord(elem[0],elem[1]);
+			}
+			sentence = this.manager.readNextSentence();
+		}
+		return wordsWithPosTagCount;
+	}
+	
+	/**
+	* addPosTagToWord(String word, String posTag), is a function to update a hashmap
+	* with words from the corpus and keep track of their posTags and the count of the
+	* PosTags.
+	*
+	* First we check of in the large hashmap the word we want to add the tag to is present,
+	* if not make a new instance in the large hashmap and put it in. If the word is in the
+	* large hashmap get the smaller hashmap only associated with the word and check if the
+	* postag is available in the smaller hashmap, if so update the value of the postag with
+	* +1, else add the new postag to the smaller hashmap and finally update the large
+	* Hashmap.
+	**/
+	public void addPosTagToWord(String word, String posTag){
+		Map<String,Integer> tagsWithCount = new HashMap<String, Integer>();
+		if(wordsWithPosTagCount.containsKey(word)){
+			tagsWithCount = wordsWithPosTagCount.get(word);
+			
+			if(tagsWithCount.containsKey(posTag)){
+				int valueOfPosTag = tagsWithCount.get(posTag);
+				valueOfPosTag++;
+				tagsWithCount.put(posTag, valueOfPosTag);
+			} else {
+				tagsWithCount.put(posTag, 1);
+			}
+		} else {
+			tagsWithCount.put(posTag, 1);
+		}
+		System.out.print(word); System.out.println(" -- " + tagsWithCount);
+		wordsWithPosTagCount.put(word, tagsWithCount);
 	}
 	
 	
@@ -172,7 +237,7 @@ public class NGram{
 			this.map.put(nGram, 1);
 		}
 	}
-	
+
 	/*
 	Sorteert de hashMap map en zet deze in TreeMap sortedMap. 
 	*/
@@ -200,21 +265,7 @@ public class NGram{
 			i++;
 		}
 	}
-
-	/*
-	Print de m meest voorkomende NGrams van words met pos tag combinaties uit.
-	*/
-	public void printTopFrequenciesWords(){
-		int i = 0;
-		Iterator entries = sortedMapWords.entrySet().iterator();
-		while(i < m && entries.hasNext()){
-			Map.Entry nGram = (Map.Entry) entries.next();
-			System.out.println(nGram.getKey() + " - " + nGram.getValue());
-			i++;
-		}
-	}
-
-
+	
 	/*
 	Print de totale som van alle frequenties.
 	*/
