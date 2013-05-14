@@ -23,7 +23,7 @@ public class ProbabilityCalculator{
 	}
 	
 	public ProbabilityCalculator(String testFile){
-		this.n = 2;
+		this.n = 3;
 		this.smoother = new Smoothing("WSJ02-21.pos", true);
 		this.manager = new FileManager(testFile, "evaluated_sentences.txt");
 	}
@@ -223,84 +223,45 @@ public class ProbabilityCalculator{
 	It writes the unsmoothed, add-one smoothed and Good-Turing smoothed probabilities to the file evaluated_sentences.txt.
 	**/
 	public void calculateSmoothedPOS(){
-	
-		Pattern splitPoint = Pattern.compile(" ");
-		ArrayList<String[]> nextLine = this.manager.readNextSentence();	
-
-		double unSmoothedZeroCounter = 0;
-		double addOneZeroCounter = 0;
-		double goodTuringZeroCounter = 0;
-		int sentenceCounter = 0;		
+		ArrayList<String[]> nextLine = this.manager.readNextSentence();
 		
-		while(nextLine.size() != 0){
-			//nextLine = nextLine + " </s>";
-// 			for (int i = 1; i < this.n; i++){
-// 				nextLine = "<s> " + nextLine;
-// 			}
-			double probability = 1;
-			double probabilityGoodTuring = 1;
+		int size = nextLine.size();
+		double probabilityGoodTuring = 1;
+		
+		while(size != 0){
+			String[] tags = new String[size];
+			String[] words = new String[size];
 			
-			nextLine = nextLine.replaceAll("\\s+", " ");
-			
-			//System.out.println("nextLine is: " + nextLine);
-			String[] words = splitPoint.split(nextLine);
-			if(words.length - this.n > this.n){
-				
-				boolean firstrun = true;
-							
-				for(int i=this.n; i < words.length; i++ ){
-					String[] tempGramMinOne = Arrays.copyOfRange(words, i-this.n + 1, i);
-					String[] tempGram = Arrays.copyOfRange(words, i-this.n + 1, i+1);
-					
-					String shortSentence = ("" + Arrays.asList(tempGramMinOne)).replaceAll("(^.|.$)", "").replace(", ", " ");
-					String sentence = ("" + Arrays.asList(tempGram)).replaceAll("(^.|.$)", "").replace(", ", " ");
-					
-					//System.out.println("shortsentence is: " + shortSentence);
-					//System.out.println("sentence is: " + sentence);
-					
-					
-					double freq2;
-					double freq1;
-					
-					try{
-						freq1 = nGrams[0].getValue(sentence);
-						if(firstrun){
-							 freq2 = nGrams[1].getTotalSentences();
-							 firstrun = false;
-						}else{
-							freq2 = nGrams[1].getValue(shortSentence);
-						}
-					} catch(Exception e){
-						freq1 = 0;
-						freq2 = 1;
-					}
-					
-					probability = probability * (freq1/freq2);
-					//System.out.println(probability);
-					
-					probabilityGoodTuring = probabilityGoodTuring * smoother.getGoodTuringPoss(sentence);
-					
-					
-				}
-				
-				sentenceCounter++;
-				
-				if(probability == 0.0){unSmoothedZeroCounter++;}
-				if(probabilityGoodTuring == 0.0){goodTuringZeroCounter++;}
-				
-				
-				
-				//System.out.printf("The probability for sentence: '%s' is: %e \n", nextLine, probability);
-				this.manager.writeToFile("The probability without smoothing for: '" + nextLine + "' is:" + probability);
-				this.manager.writeToFile("The probability with Good Turing smoothing: " + probabilityGoodTuring + "\n");
-				//addToMap(nextLine, probability);
-				nextLine = this.manager.readNextSentence();
-			}else{
-				//System.out.println("The sentence was too short for the ngram size");
-				nextLine = this.manager.readNextSentence();
+			for(int i = 0; i < size; i++){
+				words[i] = nextLine.get(i)[0];
+				//Get most likely tag of word & put in tags[i].
 			}
-		
+			
+			for(int i = 0; i < size; i++){
+				//calculate probability for the tag sequence.
+				String sequence = tags[i]
+				for(int j = 1; j < this.n; j++){
+					sequence = sequence + " " + tags[i + j];
+				}
+				probabilityGoodTuring = probabilityGoodTuring * smoother.getGoodTuringPoss(sequence);
+			}
+			
+			String posSeq = tags[0];
+			String sentence = words[0];
+			
+			for(int i = 1; i < size; i++){
+				posSeq = posSeq + " " + tags[i];
+				sentence = sentence + " " + words[i];
+			}
+			
+			this.manager.writeToFile("The most likely PoS tag sequence for sentence: '" + sentence + "' is: '" + posSeq + "'.");
+			this.manager.writeToFile("The probability for this sentence is: " + probabilityGoodTuring);
+			
+			nextLine = this.manager.readNextSentence();
+			size = nextLine.size();
 		}
+		
+		
 		System.out.println("Percentage of zeros in unsmoothed:" + 100*(unSmoothedZeroCounter/sentenceCounter));
 		System.out.println("Percentage of zeros in Good Turing Smoothing:" + 100*(goodTuringZeroCounter/sentenceCounter));
 		

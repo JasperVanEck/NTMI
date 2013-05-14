@@ -152,6 +152,11 @@ public class Smoothing {
 		
 	}
 	
+	public void smoothedTagsWords(){
+	
+	
+	}
+	
 	public int[] getNCounts(int k){
 		int[] results = new int[k+1];
 		for(Map.Entry<String,Integer> entry : nGrams.entrySet()){
@@ -183,7 +188,6 @@ public class Smoothing {
 	
 	
 	public double getGoodTuringPoss(String bigram){
-		
 		//System.out.println(bigram);
 		if(this.nGramsGoodTuringPoss.containsKey(bigram)){
 			return this.nGramsGoodTuringPoss.get(bigram);

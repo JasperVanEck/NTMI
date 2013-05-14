@@ -11,8 +11,6 @@ import java.io.*;
 public class NGram{
 	
 	private HashMap<String, Integer> map = new HashMap<String, Integer>();
-	private HashMap<String, Integer> mapWordsTags = new HashMap<String, Integer>();
-	private HashMap<String, Integer> mapTagsWords = new HashMap<String, Integer>();
 	private TreeMap<String, Integer> sortedMap;
 	private FileManager manager;
 	private int nGramSize;
@@ -140,7 +138,6 @@ public class NGram{
 	
 	public void computeNGramsPOSTag(){
 		ArrayList<String[]> sentence = this.manager.readNextSentence();
-
 		
 		while(sentence.size() != 0){
 			
@@ -156,8 +153,7 @@ public class NGram{
 					tags = tags + " " + sentence.get(i + j)[1];
 				}
 				addToMap(tags);
-				addToMapTagsWords(sentence.get(i)[1] + " " + sentence.get(i)[0]);
-				addToMapWordsTags(sentence.get(i)[0] + " " + sentence.get(i)[1]);
+
 			}
 			
 			sentence = this.manager.readNextSentence();
@@ -177,23 +173,6 @@ public class NGram{
 		}
 	}
 	
-	public void addToMapTagsWords(String nGram){
-		if(this.mapTagsWords.containsKey(nGram)){
-			int currentValue = this.mapTagsWords.get(nGram);
-			this.mapTagsWords.put(nGram, currentValue+1);
-		}else{
-			this.mapTagsWords.put(nGram, 1);
-		}
-	}
-
-	public void addToMapWordsTags(String nGram){
-		if(this.mapWordsTags.containsKey(nGram)){
-			int currentValue = this.mapWordsTags.get(nGram);
-			this.mapWordsTags.put(nGram, currentValue+1);
-		}else{
-			this.mapWordsTags.put(nGram, 1);
-		}
-	}
 	/*
 	Sorteert de hashMap map en zet deze in TreeMap sortedMap. 
 	*/
@@ -204,18 +183,6 @@ public class NGram{
 		sortedMap.putAll(this.map);
 	
 	}
-	
-	/*
-	Sorteert de hashMap mapWords en zet deze in TreeMap sortedMapWords.
-	*/
-	public void sortMapWords(){
-		
-		FrequencyComparator comparator = new FrequencyComparator(this.mapWords);
-		this.sortedMapWords = new TreeMap<String, Integer>(comparator);
-		this.sortedMapWords.putAll(this.mapWords);
-	
-	}
-	
 	
 	public int getN(){
 		return this.nGramSize;
