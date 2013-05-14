@@ -225,32 +225,25 @@ public class ProbabilityCalculator{
 	public void calculateSmoothedPOS(){
 		ArrayList<String[]> nextLine = this.manager.readNextSentence();
 		
+		while(nextLine.size() > 15){
+			nextLine = this.manager.readNextSentence();
+		}
 		int size = nextLine.size();
-		double probabilityGoodTuring = 1;
+		
 		NGram ngram = new NGram("WSJ02-21.pos");
 		Map<String, Map<String, Integer>> wordsTagsCount = ngram.createWordsDictionaryWithPosTagsAndCount();
 		
 		while(nextLine != null){
+			double probabilityGoodTuring = 1;
 			String[] tags = new String[size];
 			String[] words = new String[size];
 			
-			// Misschien losse functie
 			for(int i = 0; i < size; i++){
 				words[i] = nextLine.get(i)[0];
+				
 				//Get most likely tag of word & put in tags[i].
 				Map<String, Integer> tagsCount= wordsTagsCount.get(words[i]);
-				
-				Iterator entries = tagsCount.keySet().iterator();
-				
-				int count = 0;
-				while(entries.hasNext()){
-					String entry = (String) entries.next();
-					int value = tagsCount.get(entry);
-					if(value > count){
-						count = value;
-						tags[i] = entry;
-					}
-				}
+				tags[i] = findBestTag(tagsCount);
 			}
 			
 			for(int i = 0; i < (size - this.n); i++){
@@ -259,7 +252,7 @@ public class ProbabilityCalculator{
 				for(int j = 1; j < this.n; j++){
 					sequence = sequence + " " + tags[i + j];
 				}
-				probabilityGoodTuring = probabilityGoodTuring * smoother.getGoodTuringPoss(sequence);
+				probabilityGoodTuring *= smoother.getGoodTuringPoss(sequence);
 			}
 			
 			String posSeq = tags[0];
@@ -269,11 +262,16 @@ public class ProbabilityCalculator{
 				posSeq = posSeq + " " + tags[i];
 				sentence = sentence + " " + words[i];
 			}
-			
+			System.out.println(sentence);
+			System.out.println(posSeq);
+			System.out.println("Probibility of the Sentence is " + probabilityGoodTuring);
 			this.manager.writeToFile("The most likely PoS tag sequence for sentence: '" + sentence + "' is: '" + posSeq + "'.");
 			this.manager.writeToFile("The probability for this sentence is: " + probabilityGoodTuring);
 			
 			nextLine = this.manager.readNextSentence();
+			while(nextLine.size() > 15){
+				nextLine = this.manager.readNextSentence();
+			}
 			size = nextLine.size();
 		}
 		
@@ -287,8 +285,23 @@ public class ProbabilityCalculator{
 			System.out.println(e);
 		}
 	}
+	/**
+	* findBestTag(Map<String, Integer> tagsCount) finds the best possible tag-value pair
+	* from a Map of possible tags and returns the tag with the highest count.
+	**/
+	public String findBestTag(Map<String, Integer> tagsCount){
+		Map.Entry<String, Integer> maxEntry = null;
 
-
+		for (Map.Entry<String, Integer> entry : tagsCount.entrySet())
+		{
+			if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0)
+			{
+				maxEntry = entry;
+			}
+		}
+		return maxEntry.getKey();
+	}
+	
 	public void addToMap(String sentence, double prob){
 		sortedSentences.put(prob, sentence);
 	}
