@@ -228,7 +228,7 @@ public class ProbabilityCalculator{
 		int size = nextLine.size();
 		double probabilityGoodTuring = 1;
 		NGram ngram = new NGram("WSJ02-21.pos");
-		HashMap<String, Map<String, Integer>> wordsTagsCount = ngram.createWordsDictionaryWithPosTagsAndCount();
+		Map<String, Map<String, Integer>> wordsTagsCount = ngram.createWordsDictionaryWithPosTagsAndCount();
 		
 		while(size != 0){
 			String[] tags = new String[size];
@@ -237,12 +237,23 @@ public class ProbabilityCalculator{
 			for(int i = 0; i < size; i++){
 				words[i] = nextLine.get(i)[0];
 				//Get most likely tag of word & put in tags[i].
+				Map<String, Integer> tagsCount= wordsTagsCount.get(words[i]);
+				Iterator entries = tagsCount.keySet().iterator();
 				
+				int count = 0;
+				while(entries.hasNext()){
+					String entry = (String) entries.next();
+					int value = tagsCount.get(entry);
+					if(value > count){
+						count = value;
+						tags[i] = entry;
+					}
+				}
 			}
 			
-			for(int i = 0; i < size; i++){
+			for(int i = 0; i < (size - this.n); i++){
 				//calculate probability for the tag sequence.
-				String sequence = tags[i]
+				String sequence = tags[i];
 				for(int j = 1; j < this.n; j++){
 					sequence = sequence + " " + tags[i + j];
 				}
@@ -265,9 +276,9 @@ public class ProbabilityCalculator{
 		}
 		
 		
-		System.out.println("Percentage of zeros in unsmoothed:" + 100*(unSmoothedZeroCounter/sentenceCounter));
-		System.out.println("Percentage of zeros in Good Turing Smoothing:" + 100*(goodTuringZeroCounter/sentenceCounter));
-		
+// 		System.out.println("Percentage of zeros in unsmoothed:" + 100*(unSmoothedZeroCounter/sentenceCounter));
+// 		System.out.println("Percentage of zeros in Good Turing Smoothing:" + 100*(goodTuringZeroCounter/sentenceCounter));
+// 		
 		try{
 			this.manager.terminate();
 		}catch(Exception e){

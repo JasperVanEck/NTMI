@@ -126,7 +126,7 @@ public class Smoothing {
 			double unigramCount;
 			double adjustedCount = (double)count;
 			String bigram = entry.getKey();
-			String prefix = bigram.split("\\s+")[0];
+			String prefix = bigram.split("\\s+")[0] + " " + bigram.split("\\s+")[1];
 			
 			if(prefix.equals("null")){
 				continue;

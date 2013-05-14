@@ -186,7 +186,7 @@ public class NGram{
 		//System.out.println(sentence.size());
 		while(sentence != null){
 			for(String[] elem : sentence){
-				System.out.println(Arrays.toString(elem));
+				//System.out.println(Arrays.toString(elem));
 				addPosTagToWord(elem[0],elem[1]);
 			}
 			sentence = this.manager.readNextSentence();
@@ -221,7 +221,7 @@ public class NGram{
 		} else {
 			tagsWithCount.put(posTag, 1);
 		}
-		System.out.print(word); System.out.println(" -- " + tagsWithCount);
+		//System.out.print(word); System.out.println(" -- " + tagsWithCount);
 		wordsWithPosTagCount.put(word, tagsWithCount);
 	}
 	
