@@ -250,7 +250,7 @@ public class ProbabilityCalculator{
 		
 		NGram posTagDictionaryCreator = new NGram("WSJ02-21.pos");
 		Map<String, Map<String, Integer>> posTagDictionary = posTagDictionaryCreator.createPosTagDictionaryWithWordsAndCount();
-		smooth.goodTuringPosTagsCalcPossibilities(posTagDictionary);
+		HashMap<String, HashMap<String, Double>> smoothedPosTagDictionary = smooth.goodTuringPosTagsCalcPossibilities(posTagDictionary);
 		
 		while(nextLine != null){
 			System.out.println(Arrays.deepToString(nextLine.toArray()));
