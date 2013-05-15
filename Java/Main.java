@@ -15,7 +15,7 @@ public class Main{
 	public static void main(String[] args){
 
 		ProbabilityCalculator probCalc = new ProbabilityCalculator("WSJ23.pos");
-		probCalc.calculateSmoothedPOS();
+		probCalc.calculateSmoothedPos();
 
 	}
 }

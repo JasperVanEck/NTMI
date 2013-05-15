@@ -18,7 +18,7 @@ public class NGram{
 	private FileManager manager;
 	private int nGramSize;
 	private int m;
-	private int sentences;
+	private int sentencesCount;
 	private int startSymbolCount=0;
 
 	
@@ -31,34 +31,25 @@ public class NGram{
 	/*
 	Constructor voor nGram, specificeer welke corpus gebruikt wordt en welke orde n-grams berekend worden.
 	*/
-	public NGram(String inputFile, int n, boolean pos) {
+	public NGram(String inputFile, int n) {
 		nGramSize = n;
-		this.sentences = 0;
+		this.sentencesCount = 0;
+		/**
 		String inputFileName = inputFile.replaceFirst("\\.txt", "");
 		String outputFile = inputFileName + "_" + n + "grams.txt";
+		**/
 				
 		this.manager = new FileManager(inputFile);
-		if(pos){
-			computeNGramsPosTag();
-		}else{
-			computeNGramsWithDummySymbols();
-		}
-		sortMap();
 	}
 	
 	/*
 	Overloaded constructor, voor het specificeren hoeveel van de meest voorkomende nGrams geprint moeten worden.
 	*/
-	public NGram(String inputFile, int n, boolean pos, int m){
+	public NGram(String inputFile, int n, int m){
 		
-		this(inputFile, n, pos);
+		this(inputFile, n);
 		this.m = m;
 		//printSumFrequencies();
-	}
-	
-	public NGram(String inputFile, int n){
-		this.manager = new FileManager(inputFile);
-		this.nGramSize = n;
 	}
 	
 	public NGram(String inputFile){
@@ -90,7 +81,7 @@ public class NGram{
 				nextLine = nextLine.replace("<s> ", startsymbols);
 				startSymbolCount++;
 				if(nextLine.contains("</s>")){
-					this.sentences++;
+					this.sentencesCount++;
 				}
 
 				String[] currentWords = splitPoint.split(nextLine);
@@ -159,22 +150,50 @@ public class NGram{
 	* their count, with the function add to map. This continues till the end of
 	* the file is reached, null.
 	**/
-	public void computeNGramsPosTag(){
+	public HashMap<String, Integer> computeNGramsPosTag(){
 		ArrayList<String[]> sentence = this.manager.readNextSentence();
+		String[] startSymbol = {"<s>", "<s>"};
+		
+		for(int i = 0; i < this.nGramSize-1; i++){
+			sentence.add(0, startSymbol);
+		}
+		
+		System.out.println(sentence.size() + "--" + this.nGramSize);
 		int amountOfNGrams = sentence.size() - (this.nGramSize - 1);
 		String tempNGram = "";
+		
 		while(sentence != null){
+			sentencesCount++;
 			amountOfNGrams = sentence.size() - (this.nGramSize - 1);
 			for(int from = 0; from < amountOfNGrams; from++){
 				for(int i = 0; i < this.nGramSize; i++){
-					tempNGram += sentence.get(from+i)[0] + " ";
+					tempNGram += sentence.get(from+i)[1] + " ";
 				}
 				tempNGram = tempNGram.substring(0, tempNGram.length() - 1);
 				addToMap(tempNGram, this.map);
 				tempNGram="";
 			}
+			
 			sentence = this.manager.readNextSentence();
 		}
+		return this.map;
+	}
+	/**
+	* createPosTagDictionaryWithWordsAndCount(), is a function to loop through
+	* each sentence of the file given in the constructor and put the combinations
+	* in a hashmap with the help of addWordToPosTag() function.
+	**/
+	public Map<String, Map<String, Integer>> createPosTagDictionaryWithWordsAndCount(){
+		ArrayList<String[]> sentence = this.manager.readNextSentence();
+		//System.out.println(sentence.size());
+		while(sentence != null){
+			for(String[] elem : sentence){
+				//System.out.println(Arrays.toString(elem));
+				addPosTagToWord(elem[1],elem[0]);
+			}
+			sentence = this.manager.readNextSentence();
+		}
+		return wordsWithPosTagCount;
 	}
 	
 	/**
@@ -314,7 +333,7 @@ public class NGram{
 	}
 	
 	public int getTotalSentences(){
-		return this.sentences;
+		return this.sentencesCount;
 	}
 	
 	public TreeMap<String, Integer> getSortedMap(){

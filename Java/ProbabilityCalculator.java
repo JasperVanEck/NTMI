@@ -9,22 +9,27 @@ public class ProbabilityCalculator{
 	private NGram[] nGrams;
 	private FileManager manager;
 	private Smoothing smoother;
-	private int n;
+	private int n,k;
 	private TreeMap<Double, String> sortedSentences = new TreeMap<Double, String>();
+	
+	public static void main(String[] args){
+		ProbabilityCalculator test = new ProbabilityCalculator("WSJ23.pos", "WSJ02-21.pos", 3, 4);
+		test.calculateSmoothedPos();
+	}
 
-	public ProbabilityCalculator(String addFile, String corpusFile, int n){
+	public ProbabilityCalculator(String addFile, String corpusFile, int n, int k){
 		this.n = n;
-		
+		this.k = k;
 		this.nGrams = new NGram[2];
-		this.nGrams[0] = new NGram(corpusFile, n, false);
-		this.nGrams[1] = new NGram(corpusFile, n - 1, false);
+		this.nGrams[0] = new NGram(corpusFile, n);
+		this.nGrams[1] = new NGram(corpusFile, n - 1);
 		
 		this.manager = new FileManager(addFile);
 	}
 	
 	public ProbabilityCalculator(String testFile){
 		this.n = 3;
-		this.smoother = new Smoothing("WSJ02-21.pos", true);
+		this.smoother = new Smoothing("WSJ02-21.pos");
 		this.manager = new FileManager(testFile, "evaluated_sentences.txt");
 	}
 	
@@ -222,7 +227,7 @@ public class ProbabilityCalculator{
 	This function performs probability calculations on sentences.
 	Good-Turing smoothed probabilities to the file evaluated_sentences.txt.
 	**/
-	public void calculateSmoothedPOS(){
+	public void calculateSmoothedPos(){
 		ArrayList<String[]> nextLine = this.manager.readNextSentence();
 		
 		while(nextLine.size() > 15){
@@ -230,20 +235,41 @@ public class ProbabilityCalculator{
 		}
 		int size = nextLine.size();
 		
-		NGram ngram = new NGram("WSJ02-21.pos");
-		Map<String, Map<String, Integer>> wordsTagsCount = ngram.createWordsDictionaryWithPosTagsAndCount();
+		//NGram ngram = new NGram("WSJ02-21.pos");
+		//Map<String, Map<String, Integer>> wordsTagsCount = ngram.createWordsDictionaryWithPosTagsAndCount();
+		
+		HashMap<String, Integer> posNGrams = nGrams[0].computeNGramsPosTag();
+		System.out.println(posNGrams.size());
+		
+		HashMap<String, Integer> posNMinusOneGrams = nGrams[1].computeNGramsPosTag();
+		System.out.println(posNMinusOneGrams.size());
+		
+		Smoothing smooth = new Smoothing();
+		Map<String, Double> goodTuringPossilitiesOfNGramPos = smooth.goodTuringPos(posNGrams,
+														posNMinusOneGrams, this.k, nGrams[0].getTotalSentences());
+		
+		NGram posTagDictionaryCreator = new NGram("WSJ02-21.pos");
+		Map<String, Map<String, Integer>> posTagDictionary = posTagDictionaryCreator.createPosTagDictionaryWithWordsAndCount();
+		smooth.goodTuringPosTagsCalcPossibilities(posTagDictionary);
 		
 		while(nextLine != null){
+			System.out.println(Arrays.deepToString(nextLine.toArray()));
 			double probabilityGoodTuring = 1;
 			String[] tags = new String[size];
 			String[] words = new String[size];
 			
+/**			
 			for(int i = 0; i < size; i++){
 				words[i] = nextLine.get(i)[0];
-				
+				//if word is not known in train set option.
 				//Get most likely tag of word & put in tags[i].
 				Map<String, Integer> tagsCount= wordsTagsCount.get(words[i]);
+				System.out.println(tagsCount.size());
+				if(tagsCount.size()==0){
+					
+				}
 				tags[i] = findBestTag(tagsCount);
+				
 			}
 			
 			for(int i = 0; i < (size - this.n); i++){
@@ -254,7 +280,7 @@ public class ProbabilityCalculator{
 				}
 				probabilityGoodTuring *= smoother.getGoodTuringPoss(sequence);
 			}
-			
+**/
 			String posSeq = tags[0];
 			String sentence = words[0];
 			
@@ -300,6 +326,14 @@ public class ProbabilityCalculator{
 			}
 		}
 		return maxEntry.getKey();
+	}
+	
+	public int totalWordCount(Map<String, Integer> tagsCount){
+		int total = 0;
+		for(Map.Entry<String, Integer> elem : tagsCount.entrySet()){
+			total += elem.getValue();
+		}
+		return total;
 	}
 	
 	public void addToMap(String sentence, double prob){
