@@ -14,7 +14,8 @@ public class ProbabilityCalculator{
 	
 	public static void main(String[] args){
 		ProbabilityCalculator test = new ProbabilityCalculator("WSJ23.pos", "WSJ02-21.pos", 3, 4);
-		test.calculateSmoothedPos();
+		//test.calculateSmoothedPos();
+		test.creatPosTagSequences();
 	}
 
 	public ProbabilityCalculator(String addFile, String corpusFile, int n, int k){
@@ -227,6 +228,8 @@ public class ProbabilityCalculator{
 	This function performs probability calculations on sentences.
 	Good-Turing smoothed probabilities to the file evaluated_sentences.txt.
 	**/
+	
+	/**
 	public void calculateSmoothedPos(){
 		ArrayList<String[]> nextLine = this.manager.readNextSentence();
 		
@@ -235,8 +238,8 @@ public class ProbabilityCalculator{
 		}
 		int size = nextLine.size();
 		
-		//NGram ngram = new NGram("WSJ02-21.pos");
-		//Map<String, Map<String, Integer>> wordsTagsCount = ngram.createWordsDictionaryWithPosTagsAndCount();
+		NGram ngram = new NGram("WSJ02-21.pos");
+		Map<String, Map<String, Integer>> wordsTagsCount = ngram.createWordsDictionaryWithPosTagsAndCount();
 		
 		HashMap<String, Integer> posNGrams = nGrams[0].computeNGramsPosTag();
 		System.out.println(posNGrams.size());
@@ -252,27 +255,56 @@ public class ProbabilityCalculator{
 		Map<String, Map<String, Integer>> posTagDictionary = posTagDictionaryCreator.createPosTagDictionaryWithWordsAndCount();
 		HashMap<String, HashMap<String, Double>> smoothedPosTagDictionary = smooth.goodTuringPosTagsCalcPossibilities(posTagDictionary);
 		HashMap<String, HashMap<String, Double>> smoothedPosTagDictionaryProbabilities = calculatePosTagDictionaryProbabilities(smoothedPosTagDictionary);
+		int startSymbolCount = this.n-1;
 		
-		while(nextLine != null){
+		//while(nextLine != null){
 			System.out.println(Arrays.deepToString(nextLine.toArray()));
-			double probabilityGoodTuring = 1;
+			//double probabilityGoodTuring = 1;
 			String[] tags = new String[size];
-			String[] words = new String[size];
+			String[] words = new String[size +(startSymbolCount)];
 			
-/**			
-			for(int i = 0; i < size; i++){
-				words[i] = nextLine.get(i)[0];
+			double viterbiPathProbability = 1;
+			
+			
+			
+			for(int i = 0; i < (size + startSymbolCount); i++){
+				if(i < startSymbolCount){
+					words[i] = "<s> ";
+				}else{
+				words[i] = nextLine.get(i-(startSymbolCount))[0];
+				}
+				//tags[i] = nextLine.get(i)[1];
+			}
+			System.out.println(Arrays.toString(words));
+			
+			String[] nGramsOfSentence = nGrams[0].createNGramsOfSentence(words);
+			System.out.println(Arrays.toString(nGramsOfSentence));
+			
+			for(String nGram : nGramsOfSentence){
+				
+			
+			
+			}
+			
+			
+			
+			//for
 				//if word is not known in train set option.
 				//Get most likely tag of word & put in tags[i].
 				Map<String, Integer> tagsCount= wordsTagsCount.get(words[i]);
+				System.out.println(words[i] + " --- "+ Arrays.toString(tagsCount.entrySet().toArray()));
+		
 				System.out.println(tagsCount.size());
 				if(tagsCount.size()==0){
 					
 				}
 				tags[i] = findBestTag(tagsCount);
-				
-			}
-**/
+			
+			//}
+			
+			
+
+
 			for(int i = 0; i < (size - this.n); i++){
 				//calculate probability for the tag sequence.
 				String sequence = tags[i];
@@ -282,6 +314,11 @@ public class ProbabilityCalculator{
 				probabilityGoodTuring *= goodTuringPossilitiesOfNGramPos.get(sequence);
 			}
 
+			
+			
+			
+			
+
 			String posSeq = tags[0];
 			String sentence = words[0];
 			
@@ -289,18 +326,18 @@ public class ProbabilityCalculator{
 				posSeq = posSeq + " " + tags[i];
 				sentence = sentence + " " + words[i];
 			}
-			System.out.println(sentence);
-			System.out.println(posSeq);
-			System.out.println("Probibility of the Sentence is " + probabilityGoodTuring);
-			this.manager.writeToFile("The most likely PoS tag sequence for sentence: '" + sentence + "' is: '" + posSeq + "'.");
-			this.manager.writeToFile("The probability for this sentence is: " + probabilityGoodTuring);
+			//System.out.println(sentence);
+			//System.out.println(posSeq);
+			//System.out.println("Probibility of the Sentence is " + probabilityGoodTuring);
+			//this.manager.writeToFile("The most likely PoS tag sequence for sentence: '" + sentence + "' is: '" + posSeq + "'.");
+			//this.manager.writeToFile("The probability for this sentence is: " + probabilityGoodTuring);
 			
 			nextLine = this.manager.readNextSentence();
 			while(nextLine.size() > 15){
 				nextLine = this.manager.readNextSentence();
 			}
 			size = nextLine.size();
-		}
+		//}
 		
 		
 // 		System.out.println("Percentage of zeros in unsmoothed:" + 100*(unSmoothedZeroCounter/sentenceCounter));
@@ -312,16 +349,155 @@ public class ProbabilityCalculator{
 			System.out.println(e);
 		}
 	}
+	**/
+	public void creatPosTagSequences(){
+		NGram trigrams = new NGram("WSJ02-21.pos", 3);
+		NGram bigrams = new NGram("WSJ02-21.pos", 2);
+		NGram dictionaryCreator = new NGram("WSJ02-21.pos");
+		Smoothing smoother = new Smoothing();
+		HashMap<String, Integer> trigramsOfPosTags= trigrams.computeNGramsPosTag();
+		HashMap<String, Integer> bigramsOfPosTags= bigrams.computeNGramsPosTag();
+		int totalSentencesInTrainingCorpus = trigrams.getTotalSentences();
+		HashMap<String, Double> postagTrigramPossibilities = smoother.goodTuringPos(trigramsOfPosTags, bigramsOfPosTags, this.k, totalSentencesInTrainingCorpus);
+		
+		
+		
+		String sentence = "<s> <s> Floris want";
+		String[] sentenceTrigrams = dictionaryCreator.createNGramsOfSentence(sentence.split(" "), 3);
+		
+		Map<String, Map<String, Integer>> postagDictionary = dictionaryCreator.createPosTagDictionaryWithWordsAndCount();
+		
+		//System.out.println(postagDictionary.keySet());
+		
+		HashMap<String, HashMap<String, Double>> posTagDictionaryWithWordsAndPoss = smoother.goodTuringPosTagsCalcPossibilities(postagDictionary);
+		
+		ArrayList<String[]> sentenceTagged = createPosTagSequenceForSentence(sentenceTrigrams, postagTrigramPossibilities, posTagDictionaryWithWordsAndPoss);
+	
+	}
+	
+	public ArrayList<String[]> createPosTagSequenceForSentence(String[] sentenceTrigrams, HashMap<String, Double> postagTrigramsPoss, HashMap<String, HashMap<String, Double>> posTagDictionaryWithWordsAndPoss){
+		
+		double viterbiPoss = 1;
+		double bestValue = 0;
+		String bestTag = "";
+		String bigram = "";
+		String currentTag = "";
+		
+		
+		
+		
+		ArrayList<String[]> taggedSentence = new ArrayList<String[]>();
+		String[] startSentence = sentenceTrigrams[0].split(" ");
+		String[] predecessorBigram = {startSentence[0], startSentence[1]};
+		
+		for(String trigram : sentenceTrigrams){
+			HashMap<String, Double> postagsWithPossGivenPredecessors = new HashMap<String, Double>();
+			HashMap<String, Double> wordGivenPostagPossibilities = new HashMap<String, Double>();
+			HashMap<String, Double> intermediateViterbiPossMap = new HashMap<String, Double>();
+		
+		
+			System.out.println(trigram);
+			postagsWithPossGivenPredecessors.clear();
+			wordGivenPostagPossibilities.clear();
+			intermediateViterbiPossMap.clear();
+			
+			String[] trigramArray = trigram.split(" ");
+			String wordToTag = trigramArray[2];
+			//System.out.println(Arrays.toString(trigramArray));
+			System.out.println(Arrays.toString(predecessorBigram));
+			/**
+			Deze for loop haalt alle mogelijke postags op gegeven de twee voorgangers, en de kans daarop. En stopt deze in de hashmap postagsWithPossGivenPredecessors.
+			**/
+			
+			for(Map.Entry<String, Double> elem : postagTrigramsPoss.entrySet()){
+				String[] currentElement = elem.getKey().split(" ");
+				//System.out.println(Arrays.toString(currentElement));
+				//System.out.println("Does elem 0 equal:" + trigramArray[0].equals(currentElement[0]));
+				//System.out.println(currentElement[0] + " --- " + trigramArray[0]);
+				if(predecessorBigram[0].equals(currentElement[0]) && predecessorBigram[1].equals(currentElement[1])){
+					//System.out.println(Arrays.toString(trigramArray) + " -- " + Arrays.toString(currentElement));
+					postagsWithPossGivenPredecessors.put(currentElement[2], elem.getValue());
+				}
+				
+			}
+			System.out.println("Resultaat eerste loop:" + postagsWithPossGivenPredecessors);
+			
+			
+			/**
+			Deze for-loop haalt voor elke tag uit de vorige loop de mogelijke woorden op met hun kans gegeven die tag en zet deze in wordGivenPostagPossibilities. 
+			Als het niet bekent is haalt hij de kans op dat het woord niet voorkomt bij deze tag.
+			**/
+			
+			for(Map.Entry<String, Double> postagEntry : postagsWithPossGivenPredecessors.entrySet()){
+				currentTag = postagEntry.getKey();
+				System.out.println(currentTag);
+				Map<String, Double> wordsAndPossibilityForTag = posTagDictionaryWithWordsAndPoss.get(currentTag);
+				//System.out.println(wordsAndPossibilityForTag);
+				if(wordsAndPossibilityForTag.containsKey(wordToTag)){
+					System.out.println("IF - Current word: " + wordToTag + " --- " + wordsAndPossibilityForTag.get(wordToTag));
+					wordGivenPostagPossibilities.put(currentTag, wordsAndPossibilityForTag.get(wordToTag));					
+				}else{
+					System.out.println("ELSE - Current word: " + wordToTag + " --- " + wordsAndPossibilityForTag.get("0Count"));
+					wordGivenPostagPossibilities.put(currentTag, wordsAndPossibilityForTag.get("0Count"));					
+				}
+
+			}
+			//System.out.println(posTagDictionaryWithWordsAndPoss);
+			
+			System.out.println("\n Resultaat tweede loop:" + wordGivenPostagPossibilities);
+			
+			/**
+			Deze loop haalt de kansen uit de vorige loops en vermenigvuldigt deze met elkaar.
+			**/
+			
+			for(Map.Entry<String, Double> postagWithPossGivenPre : postagsWithPossGivenPredecessors.entrySet()){
+				String tag = postagWithPossGivenPre.getKey();
+				double wordPoss = wordGivenPostagPossibilities.get(tag);
+				double intermediateViterbiPoss = postagWithPossGivenPre.getValue() * wordPoss;
+				intermediateViterbiPossMap.put(tag, intermediateViterbiPoss);
+			}
+			
+			System.out.println("\n Resultaat derde loop: " + intermediateViterbiPossMap);
+			
+			/**
+			Deze loop selecteert de hoogste waarde uit het product van de vorige loop.
+			**/
+			for(Map.Entry<String, Double> intermediatePoss : intermediateViterbiPossMap.entrySet()){
+				if(bestValue < intermediatePoss.getValue()){
+					bestValue = intermediatePoss.getValue();
+					bestTag = intermediatePoss.getKey();
+				}
+			}
+			predecessorBigram[0] = predecessorBigram[1];
+			predecessorBigram[1] = bestTag;
+			String[] temp = {wordToTag, bestTag};
+			taggedSentence.add(temp);
+			viterbiPoss *= bestValue;
+			bestValue = 0;
+			bestTag = "";
+			
+			System.out.println(postagsWithPossGivenPredecessors.size());
+			System.out.println(wordGivenPostagPossibilities.size());
+			System.out.println(intermediateViterbiPossMap.size());
+		
+		}
+		System.out.println("The final tagged sentence: " + Arrays.deepToString(taggedSentence.toArray()));
+		String[] endresult = {"Possibility for this postag sequence", "" + viterbiPoss};
+		taggedSentence.add(endresult);
+		return taggedSentence;
+		
+	}
+	
 
 	/**
 	* calculatePosTagDictionaryProbabilities(HashMap<String, HashMap<String, Double>> dictionary) calculates the probabilities 
 	* of the words given their tag.
 	**/
 	public HashMap<String, HashMap<String, Double>> calculatePosTagDictionaryProbabilities(HashMap<String, HashMap<String, Double>> dictionary){
-		HashMap<String, HashMap<String, Double>> dictionaryPosTagProbabilities = new HashMap<String, HashMap<String, Double>>;
+		HashMap<String, HashMap<String, Double>> dictionaryPosTagProbabilities = new HashMap<String, HashMap<String, Double>>();
 		
 		for(Map.Entry<String, HashMap<String, Double>> entry : dictionary.entrySet()){
-			HashMap<String, Double> innerMap = new HashMap<String, Double>;
+			HashMap<String, Double> innerMap = new HashMap<String, Double>();
 			double totalWordsOfTag = totalWordCountSmoothed(entry.getValue()) + 1;
 			for(Map.Entry<String, Double> innerEntry: entry.getValue().entrySet()){
 				double probability = innerEntry.getValue()/totalWordsOfTag;

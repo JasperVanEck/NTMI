@@ -144,6 +144,25 @@ public class NGram{
 		}
 
 	}
+	
+	public String[] createNGramsOfSentence(String[] inputSentence, int n){
+		int arraySize = inputSentence.length-(n-1);
+		String[] result = new String[arraySize];
+		
+		String nGram = "";
+		for(int i = 0; i < arraySize; i++){
+			for(int j = 0; j < (n); j++){
+				nGram += inputSentence[i+j] + " ";
+			}
+			nGram = nGram.substring(0, nGram.length() - 1);
+			result[i] = nGram;
+			nGram = "";
+		}
+		return result;
+	
+	}
+	
+	
 	/**
 	* computeNGramsPosTag() creates n-grams of each sentece of the give corpus
 	* (the n-size is definde in de constructor) and stores these in a map with
@@ -154,15 +173,15 @@ public class NGram{
 		ArrayList<String[]> sentence = this.manager.readNextSentence();
 		String[] startSymbol = {"<s>", "<s>"};
 		
-		for(int i = 0; i < this.nGramSize-1; i++){
-			sentence.add(0, startSymbol);
-		}
-		
-		System.out.println(sentence.size() + "--" + this.nGramSize);
 		int amountOfNGrams = sentence.size() - (this.nGramSize - 1);
 		String tempNGram = "";
 		
 		while(sentence != null){
+			for(int i = 0; i < this.nGramSize-1; i++){
+				sentence.add(0, startSymbol);
+			}
+			//System.out.println(Arrays.deepToString(sentence.toArray()));
+			//System.out.println(sentence.size() + "--" + this.nGramSize);
 			sentencesCount++;
 			amountOfNGrams = sentence.size() - (this.nGramSize - 1);
 			for(int from = 0; from < amountOfNGrams; from++){

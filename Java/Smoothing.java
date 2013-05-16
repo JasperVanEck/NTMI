@@ -91,14 +91,14 @@ public class Smoothing {
 		
 	}
 	
-	public Map<String, Double> goodTuringPos(HashMap<String, Integer> posNGrams, 
+	public HashMap<String, Double> goodTuringPos(HashMap<String, Integer> posNGrams, 
 												HashMap<String, Integer> posNMinusOneGrams, 
 												int k, int sentencesCount) {
 		
 		int[] counts = getNCounts2(posNGrams, k);
 		double[] adjustedCounts = getAdjustedCounts(counts, posNGrams.size(), posNMinusOneGrams.size(), k);
 		System.out.println(Arrays.toString(adjustedCounts));
-		Map<String, Double> nGramsGoodTuringPoss = new HashMap<String, Double>();
+		HashMap<String, Double> nGramsGoodTuringPoss = new HashMap<String, Double>();
 		
 		for(Map.Entry<String,Integer> entry : posNGrams.entrySet()){
 			double poss;
@@ -154,12 +154,19 @@ public class Smoothing {
 	public HashMap<String, HashMap<String, Double>> goodTuringPosTagsCalcPossibilities(
 																	Map<String, Map<String, Integer>> posTagDictionary){
 		
-		HashMap<String, HashMap<String, Double>> tagWithWordsNewCountsMap = new HashMap<String, HashMap<String, Double>>();
-		HashMap<String, Double> wordsWithNewCount = new HashMap<String, Double>();
+		HashMap<String, HashMap<String, Double>> tagWithWordsPossMap = new HashMap<String, HashMap<String, Double>>();
+		
+		
 		double newValue = 0;
 		double nOneCount = 0;
-		
+		double totalWordCountPerTag = 0;
+		double possibility = 0;
 		for(Map.Entry<String, Map<String, Integer>> elem : posTagDictionary.entrySet()){
+			HashMap<String, Double> wordsWithNewCount = new HashMap<String, Double>();
+			HashMap<String, Double> wordsWithPossibility = new HashMap<String, Double>();
+			//wordsWithPossibility.clear();
+			//wordsWithNewCount.clear();
+			//System.out.println(elem.getKey());
 			for(Map.Entry<String, Integer> elem2 : elem.getValue().entrySet()) {
 				newValue = (double)elem2.getValue();
 				
@@ -167,25 +174,37 @@ public class Smoothing {
 					newValue = 0.5;
 					nOneCount++;
 				}
-				
+				totalWordCountPerTag += newValue;
 				wordsWithNewCount.put(elem2.getKey(),newValue);
 				
-				System.out.println(elem2.getKey() + " --- " + newValue);
+				//System.out.println(elem2.getKey() + " --- " + newValue);
 			}
 			double missingCount = 0.5 * nOneCount;
 			wordsWithNewCount.put("0Count", missingCount);
-			tagWithWordsNewCountsMap.put(elem.getKey(), wordsWithNewCount);
+			//System.out.println(wordsWithNewCount);
+			for(Map.Entry<String, Double> elem2 : wordsWithNewCount.entrySet()){
+				
+				possibility = elem2.getValue()/totalWordCountPerTag;
+				wordsWithPossibility.put(elem2.getKey(), possibility);
+				//System.out.println("word: " + elem2.getKey() +" Possibility: " + possibility + " Count: " + elem2.getValue());
+				//System.out.println( "Totalwordcoutn: " + totalWordCountPerTag);
+			}
+			//System.out.println(wordsWithPossibility);
+			
+			tagWithWordsPossMap.put(elem.getKey(), wordsWithPossibility);
+			//System.out.println(tagWithWordsPossMap);
 			nOneCount = 0;
-			wordsWithNewCount.clear();
+			totalWordCountPerTag = 0;
+			
 		}
+		//System.out.println(tagWithWordsPossMap);
 		
-		
-		return tagWithWordsNewCountsMap;
+		return tagWithWordsPossMap;
 	}
 	
 	private double[] getAdjustedCounts(int[] counts, int sizeNGramMap, int sizeNMinusOneGramMap, int k){
 		double[] adjustedCounts = new double[k+1];
-		System.out.println("Original counts: " + Arrays.toString(counts));
+		//System.out.println("Original counts: " + Arrays.toString(counts));
 		
 		double countNextK = (double)counts[k];
 		double nZero = (double)sizeNMinusOneGramMap*sizeNMinusOneGramMap-sizeNGramMap;
@@ -208,7 +227,7 @@ public class Smoothing {
 			adjustedCounts[r] = aboveDivide/belowDivide;
 			
 		}
-		System.out.println("New counts: " + Arrays.toString(adjustedCounts));
+		//System.out.println("New counts: " + Arrays.toString(adjustedCounts));
 		return adjustedCounts;
 	}
 	
