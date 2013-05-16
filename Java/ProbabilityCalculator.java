@@ -251,6 +251,7 @@ public class ProbabilityCalculator{
 		NGram posTagDictionaryCreator = new NGram("WSJ02-21.pos");
 		Map<String, Map<String, Integer>> posTagDictionary = posTagDictionaryCreator.createPosTagDictionaryWithWordsAndCount();
 		HashMap<String, HashMap<String, Double>> smoothedPosTagDictionary = smooth.goodTuringPosTagsCalcPossibilities(posTagDictionary);
+		HashMap<String, HashMap<String, Double>> smoothedPosTagDictionaryProbabilities = calculatePosTagDictionaryProbabilities(smoothedPosTagDictionary);
 		
 		while(nextLine != null){
 			System.out.println(Arrays.deepToString(nextLine.toArray()));
@@ -271,16 +272,16 @@ public class ProbabilityCalculator{
 				tags[i] = findBestTag(tagsCount);
 				
 			}
-			
+**/
 			for(int i = 0; i < (size - this.n); i++){
 				//calculate probability for the tag sequence.
 				String sequence = tags[i];
 				for(int j = 1; j < this.n; j++){
 					sequence = sequence + " " + tags[i + j];
 				}
-				probabilityGoodTuring *= smoother.getGoodTuringPoss(sequence);
+				probabilityGoodTuring *= goodTuringPossilitiesOfNGramPos.get(sequence);
 			}
-**/
+
 			String posSeq = tags[0];
 			String sentence = words[0];
 			
@@ -311,6 +312,28 @@ public class ProbabilityCalculator{
 			System.out.println(e);
 		}
 	}
+
+	/**
+	* calculatePosTagDictionaryProbabilities(HashMap<String, HashMap<String, Double>> dictionary) calculates the probabilities 
+	* of the words given their tag.
+	**/
+	public HashMap<String, HashMap<String, Double>> calculatePosTagDictionaryProbabilities(HashMap<String, HashMap<String, Double>> dictionary){
+		HashMap<String, HashMap<String, Double>> dictionaryPosTagProbabilities = new HashMap<String, HashMap<String, Double>>;
+		
+		for(Map.Entry<String, HashMap<String, Double>> entry : dictionary.entrySet()){
+			HashMap<String, Double> innerMap = new HashMap<String, Double>;
+			double totalWordsOfTag = totalWordCountSmoothed(entry.getValue()) + 1;
+			for(Map.Entry<String, Double> innerEntry: entry.getValue().entrySet()){
+				double probability = innerEntry.getValue()/totalWordsOfTag;
+				innerMap.put(innerEntry.getKey(), probability);
+			}
+			innerMap.put("z3r0Pr0b", 1/totalWordsOfTag);
+			dictionaryPosTagProbabilities.put(entry.getKey(),innerMap);
+		}
+		
+		return dictionaryPosTagProbabilities;
+	}
+	
 	/**
 	* findBestTag(Map<String, Integer> tagsCount) finds the best possible tag-value pair
 	* from a Map of possible tags and returns the tag with the highest count.
@@ -336,6 +359,14 @@ public class ProbabilityCalculator{
 		return total;
 	}
 	
+	public double totalWordCountSmoothed(Map<String, Double> tagsCount){
+		double total = 0;
+		for(Map.Entry<String, Double> elem : tagsCount.entrySet()){
+			total += elem.getValue();
+		}
+		return total;
+	}
+
 	public void addToMap(String sentence, double prob){
 		sortedSentences.put(prob, sentence);
 	}
