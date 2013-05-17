@@ -194,10 +194,15 @@ public class ProbabilityCalculator{
 		
 	}
 	
+	/**
+	* correctnessOfTaggerForSentence(HashMap<ArrayList<String[]>, ArrayList<String[]>> results) calculate the
+	* The precision and recall of all the tags by making Maps for the truePositives,falsePositives and false Negatives.
+	* These Maps are than give to the respected methods that do the exact work.
+	**/
+	
 	public void correctnessOfTaggerForSentence(HashMap<ArrayList<String[]>, ArrayList<String[]>> results){
 		HashMap<String, Integer> truePositives = new HashMap<String, Integer>();
 		HashMap<String, Integer> falsePositives = new HashMap<String, Integer>();
-		HashMap<String, Integer> trueNegatives = new HashMap<String, Integer>();
 		HashMap<String, Integer> falseNegatives = new HashMap<String, Integer>();
 		
 		for(Map.Entry<ArrayList<String[]>,ArrayList<String[]>> entry : results.entrySet()){
@@ -237,20 +242,12 @@ public class ProbabilityCalculator{
 			}
 		}
 		
-		for(String pos : truePositives.keySet()){
-			int trueNegativeValue = totalCountFromHashMapExclude(truePositives, pos);
-			trueNegatives.put(pos, trueNegativeValue);
-		}
-		
-		//System.out.println("True Positives: \n"+ truePositives + "\n\n");
-		//System.out.println("False Positives: \n" + falsePositives + "\n\n");
-		//System.out.println("True Negatives: \n" + trueNegatives + "\n\n");
-		//System.out.println("False Negatives: \n" + falseNegatives + "\n\n");
-		
 		precision(truePositives, falsePositives);
 		recall(truePositives, falseNegatives);
 	}
-	
+	/**
+	* Calculates the precision of the map and writes this to a file and prints this in the console screen.
+	**/
 	public void precision(HashMap<String, Integer> truePositives, HashMap<String, Integer> falsePositives){
 		try{
 			FileWriter fstream = new FileWriter("precision.txt");
@@ -274,7 +271,9 @@ public class ProbabilityCalculator{
 			System.err.println("Error: " + e.getMessage());
 		}
 	}
-	
+	/**
+	* Calculates the Recall of the map and writes this to a file and prints this in the console screen.
+	**/
 	public void recall(HashMap<String, Integer> truePositives, HashMap<String, Integer> falseNegatives){
 		  try{
 			FileWriter fstream = new FileWriter("recall.txt");
@@ -295,17 +294,6 @@ public class ProbabilityCalculator{
 		} catch (Exception e){
 			System.err.println("Error: " + e.getMessage());
 		}
-	}
-	
-	public int totalCountFromHashMapExclude(HashMap<String, Integer> map, String key){
-		int total = 0;
-		
-		for(String entryKey : map.keySet()){
-			if(!entryKey.equals(key)){
-				total += map.get(key);
-			}
-		}
-		return total;
 	}	
 }
 
