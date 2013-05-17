@@ -12,119 +12,51 @@ public class Smoothing {
 	HashMap<String, Double> nGramsGoodTuringPoss = new HashMap<String, Double>();
 	double bigN, startSymbolCount;
 	long startTime, endTime, time;
-
-	public static void main(String[] args){
-		Smoothing smooth = new Smoothing("austen.txt");
-		
-	}
 	
+	/**
+	Empty constructor
+	**/
 	public Smoothing(){
 	
 	}
 	
-	public Smoothing(String corpus){
-
-				startTime = System.currentTimeMillis();
-		
-		NGram analyzer = new NGram(corpus, 3);
-		nGrams = analyzer.getHashMap();
-		startSymbolCount = analyzer.getStartSymbolCount();
-		//writeToFile(nGrams, "nGrams.txt");
-		
-		NGram analyzerMinOne = new NGram(corpus, 2);
-		nGramsMinOne = analyzerMinOne.getHashMap();
-		
-				endTime   = System.currentTimeMillis();
-				time = endTime - startTime;
-				System.out.println("Create nGrams time: " + time);
-		
-				startTime = System.currentTimeMillis();
-		goodTuring(4);
-				endTime   = System.currentTimeMillis();
-				time = endTime - startTime;
-				System.out.println("Good Turing Smoothing Calculation time: " + time);
-	
-		//writeToFile(nGramsMinOne, "nGramsMinOne.txt");
-		/*
-				startTime = System.currentTimeMillis();
-		addOneSmoothing();
-				endTime   = System.currentTimeMillis();
-				time = endTime - startTime;
-				System.out.println("Add-One Smoothing Calculation time: " + time);
-		*/
-		//writeToFile(nGramsAddOnePoss, "smoothed.txt");
-		
-	}
-	
-	public void addOneSmoothing(){	
-	
-		for (Map.Entry<String,Integer> entry : nGrams.entrySet()){
-			//get first word of bigram by splitting at spaces and returning the first entry of the array crated by the split.
-			String prefix = entry.getKey().split("\\s+")[0];
-			//System.out.println(entry.getKey());
-			//System.out.println(prefix);
-			double nMinOneCount = nGramsMinOne.size();
-			double prefixCount;
-			
-			if(prefix.equals("null")){
-				continue;
-			}
-			
-			if(prefix.equals("<s>"))
-			{
-				prefixCount = startSymbolCount;
-			} else {
-				prefixCount = nGramsMinOne.get(prefix);
-			}
-			
-			double underDivider = nMinOneCount + prefixCount;
-			double aboveDivider = 1;
-			
-			if(nGrams.containsKey(entry.getKey())){
-				aboveDivider = nGrams.get(entry.getKey()) + 1;
-			}
-			
-			double poss = aboveDivider / underDivider;			
-			
-			this.nGramsAddOnePoss.put(entry.getKey(), poss);
-		}
-		
-	}
-	
+	/**
+	goodTuringPos performs Good-Turing smoothing over map posNGrams, using posNMinusOneGrams, k (the maximum counts that should be smoothed) and sentenceCount, the total amount of sentences in the 
+	training corpus. It iterates over all entries in posNGrams, finds the corresponding nGram in posNMinusOneGrams and adjusts the count accordingly. 
+	**/
 	public HashMap<String, Double> goodTuringPos(HashMap<String, Integer> posNGrams, 
 												HashMap<String, Integer> posNMinusOneGrams, 
 												int k, int sentencesCount) {
 		
 		int[] counts = getNCounts2(posNGrams, k);
 		double[] adjustedCounts = getAdjustedCounts(counts, posNGrams.size(), posNMinusOneGrams.size(), k);
-		//System.out.println(Arrays.toString(adjustedCounts));
 		HashMap<String, Double> nGramsGoodTuringPoss = new HashMap<String, Double>();
 		
 		for(Map.Entry<String,Integer> entry : posNGrams.entrySet()){
+		
 			double poss;
 			int count = entry.getValue();
 			double nMinusOneGramCount;
 			double adjustedCount = (double)count;
 			String nGram = entry.getKey();
-			//System.out.println(nGram + " --" + count);
 			
+			//Create an (n-1)gram given the nGram by splitting the string to an array and filling a new string with the first (n-1) elements.
 			String[] nGramsPosArray = nGram.split("\\s+");
 			String[] nMinusOnePosArray = Arrays.copyOfRange(nGramsPosArray, 0, nGramsPosArray.length-1);
-			
-			//System.out.println(Arrays.toString(nGramsPosArray) + " --- " + Arrays.toString(nMinusOnePosArray));
 			String prefix = "";
 			for(String elem : nMinusOnePosArray){
 				prefix+=elem + " ";
 			}
 			prefix = prefix.substring(0, prefix.length() - 1);
-			//System.out.println(prefix);
-
+			
+			//Adjust the sentencecounter, recognized by startsymbols.
 			if(prefix.matches("^[<s>\\s*]+")){
 				nMinusOneGramCount = sentencesCount;
 			} else {
 				nMinusOneGramCount = posNMinusOneGrams.get(prefix);
 			}
 			
+			//set adjustedcount if necessary
 			if(count <= k) {
 				adjustedCount = adjustedCounts[count];
 			}
@@ -132,14 +64,17 @@ public class Smoothing {
 			poss = adjustedCount/nMinusOneGramCount;
 			
 			nGramsGoodTuringPoss.put(nGram, poss);
-			//System.out.println(nGram + " count: " + count + " adjustedCount: " + adjustedCount + " poss: " + poss );
  		}
-		
+		//add dummy which accounts for unknown mass.
 		nGramsGoodTuringPoss.put("dummy", adjustedCounts[0]/(double)posNGrams.size());
 		
 		return nGramsGoodTuringPoss;
 	}
 	
+	
+	/**
+	getNCounts2 is a utility function that returns the amount of nGrams in map posNGrams with count up to and including k.
+	**/
 	private int[] getNCounts2(HashMap<String, Integer> posNGrams, int k){
 		int[] results = new int[k+1];
 		for(Map.Entry<String,Integer> entry : posNGrams.entrySet()){
@@ -151,6 +86,16 @@ public class Smoothing {
 		return results;
 	}
 	
+	/**
+	goodTuringPosTagsCalcPossibilities recieves a Map<String, Map<String, Integer>> posTagDictionary in which for every POS-tag a map with words and counts exists. 
+	
+	It iterates over that map and performs per tag:
+	- Good-Turing smoothing over the words in the submap
+	- Possibility calculations that give all possibilities P(w|t), chance of word given the tag.
+	
+	It returns a map with <tag, nestedmap> pairs in which the posibilities of words given the tag are given. 
+	A new word is added to every map: 0Count, which is the reserved mass for unknown words.
+	**/
 	public HashMap<String, HashMap<String, Double>> goodTuringPosTagsCalcPossibilities(
 																	Map<String, Map<String, Integer>> posTagDictionary){
 		
@@ -164,9 +109,8 @@ public class Smoothing {
 		for(Map.Entry<String, Map<String, Integer>> elem : posTagDictionary.entrySet()){
 			HashMap<String, Double> wordsWithNewCount = new HashMap<String, Double>();
 			HashMap<String, Double> wordsWithPossibility = new HashMap<String, Double>();
-			//wordsWithPossibility.clear();
-			//wordsWithNewCount.clear();
-			//System.out.println(elem.getKey());
+					
+			//This loop performs calculation of new counts according to Good-Turing.
 			for(Map.Entry<String, Integer> elem2 : elem.getValue().entrySet()) {
 				newValue = (double)elem2.getValue();
 				totalWordCountPerTag += newValue;
@@ -176,41 +120,38 @@ public class Smoothing {
 					nOneCount++;
 				}
 				wordsWithNewCount.put(elem2.getKey(),newValue);
-				
-				//System.out.println(elem2.getKey() + " --- " + newValue);
+			
 			}
 			double missingCount = 0.5 * (nOneCount/totalWordCountPerTag);
 			wordsWithNewCount.put("0Count", missingCount);
-			//System.out.println(wordsWithNewCount);
+			
+			//This loop performs calculation of possibilities P(w|t).
 			for(Map.Entry<String, Double> elem2 : wordsWithNewCount.entrySet()){
-				
 				possibility = elem2.getValue()/totalWordCountPerTag;
 				wordsWithPossibility.put(elem2.getKey(), possibility);
-				//System.out.println("word: " + elem2.getKey() +" Possibility: " + possibility + " Count: " + elem2.getValue());
-				//System.out.println( "Totalwordcoutn: " + totalWordCountPerTag);
 			}
-			//System.out.println(wordsWithPossibility);
 			
+			//put the new map of words and their possibilities back.
 			tagWithWordsPossMap.put(elem.getKey(), wordsWithPossibility);
-			//System.out.println(tagWithWordsPossMap);
+			
 			nOneCount = 0;
 			totalWordCountPerTag = 0;
 			
-		}
-		//System.out.println(tagWithWordsPossMap);
-		
+		}		
 		return tagWithWordsPossMap;
 	}
 	
+	/**
+	Separate function that calculates adjusted counts for an array of ints, returns a double array. Smoothes according to Good-Turing.
+	**/
 	private double[] getAdjustedCounts(int[] counts, int sizeNGramMap, int sizeNMinusOneGramMap, int k){
-		double[] adjustedCounts = new double[k+1];
-		//System.out.println("Original counts: " + Arrays.toString(counts));
 		
+		double[] adjustedCounts = new double[k+1];		
 		double countNextK = (double)counts[k];
 		double nZero = (double)sizeNMinusOneGramMap*sizeNMinusOneGramMap-sizeNGramMap;
 		double countR;
 		
-		//Adjust counts for Frequencies under or equal to k.
+		//Iterates over the counts[] array and adjusts the counts according to Good-Turing.
 		for(int r = 0; r <= k; r++){
 			double countNextR = (double)counts[r];
 			
@@ -227,32 +168,20 @@ public class Smoothing {
 			adjustedCounts[r] = aboveDivide/belowDivide;
 			
 		}
-		//System.out.println("New counts: " + Arrays.toString(adjustedCounts));
 		return adjustedCounts;
 	}
 	
-	public int lexicalSmoothing(Map<String, Integer> tagsCount){
-		int total = 0;
-		Map<String, Double> newTagsCount = new HashMap<String, Double>();
-		for(Map.Entry<String, Integer> elem : tagsCount.entrySet()){
-			if(elem.getValue() == 1){
-				newTagsCount.put(elem.getKey(), 0.5);
-				total++;
-			}
-		}
-		return total;
-	}
-	
+	/**
+	performs Good-Turing smoothing over the local nGrams, used for building the language model.
+	**/
 	public void goodTuring(int k) {
 		
 		int[] counts = getNCounts(k);
 		double[] adjustedCounts = new double[k+1];
-		//System.out.println("Original counts: " + Arrays.toString(counts));
 		
 		double countNextK = (double)counts[k];
 		double nZero = (double)nGramsMinOne.size()*nGramsMinOne.size()-nGrams.size();
 		double countR;
-		
 		
 		//Adjust counts for Frequencies under or equal to k.
 		for(int r = 0; r <= k; r++){
@@ -301,15 +230,13 @@ public class Smoothing {
 			this.nGramsGoodTuringPoss.put(bigram, poss);
 		
 		}
-		
-		this.nGramsGoodTuringPoss.put("dummy", adjustedCounts[0]/(double)nGrams.size());
-		
-		//writeToFile(this.nGramsGoodTuringPoss, "GoodTuringPoss.txt");
-		
+		//put dummy variable in map for unknown mass.
+		this.nGramsGoodTuringPoss.put("dummy", adjustedCounts[0]/(double)nGrams.size());		
 	}
 	
-	
-	
+	/**
+	getNCounts returns an int[] with counts for how many map entries in nGrams have count up to and including k.
+	**/
 	public int[] getNCounts(int k){
 		int[] results = new int[k+1];
 		for(Map.Entry<String,Integer> entry : nGrams.entrySet()){
@@ -321,25 +248,9 @@ public class Smoothing {
 		return results;	
 	}
 	
-	public int getCountFreq(int freq){
-		return 0;
-	
-	}
-	
-	public double getAddOnePoss(String bigram){
-		if(nGramsAddOnePoss.containsKey(bigram)){	
-			return nGramsAddOnePoss.get(bigram);
-		}else{
-			String prefix = bigram.split("\\s+")[0];
-			if(nGramsMinOne.containsKey(prefix)){
-				return 1/ (nGramsMinOne.size() + nGramsMinOne.get(prefix));
-			}else{
-				return 1/ (nGramsMinOne.size()	+ 1);
-			}
-		}
-	}
-	
-	
+	/**
+	Returns the good-turing possibility for string bigram, if bigram is not found, returns the value associated with dummy, the missing mass probability.
+	**/
 	public double getGoodTuringPoss(String bigram){
 		//System.out.println(bigram);
 		if(this.nGramsGoodTuringPoss.containsKey(bigram)){
@@ -349,12 +260,10 @@ public class Smoothing {
 		}	
 	}
 	
-	
-	private double missingMass(int n1, int n) {
-		double mass = (double) n1 / (double) n;
-		return mass;
-	}
-	
+	/**
+	Writes HashMap map to file filename.txt
+	---- obsolete ----
+	**/
 	private void writeToFile(HashMap map, String fileName){
 		Iterator it = map.entrySet().iterator();
 		try{
