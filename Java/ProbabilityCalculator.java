@@ -15,7 +15,7 @@ public class ProbabilityCalculator{
 	public static void main(String[] args){
 		ProbabilityCalculator test = new ProbabilityCalculator("WSJ23.pos", "WSJ02-21.pos", 3, 4);
 		//test.calculateSmoothedPos();
-		test.creatPosTagSequences();
+		test.createPosTagSequences();
 	}
 
 	public ProbabilityCalculator(String addFile, String corpusFile, int n, int k){
@@ -227,7 +227,7 @@ public class ProbabilityCalculator{
 	/**
 	*
 	**/
-	public void creatPosTagSequences(){
+	public void createPosTagSequences(){
 		int maxLineLength = 15;
 		NGram trigrams = new NGram("WSJ02-21.pos", 3);
 		NGram bigrams = new NGram("WSJ02-21.pos", 2);
