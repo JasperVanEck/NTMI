@@ -15,7 +15,7 @@ public class ProbabilityCalculator{
 	public static void main(String[] args){
 		ProbabilityCalculator test = new ProbabilityCalculator("WSJ23.pos", "WSJ02-21.pos", 3, 4);
 		//test.calculateSmoothedPos();
-		test.creatPosTagSequences();
+		test.createPosTagSequences();
 	}
 
 	public ProbabilityCalculator(String addFile, String corpusFile, int n, int k){
@@ -223,139 +223,17 @@ public class ProbabilityCalculator{
 			System.out.println(e);
 		}
 	}
-	
+
 	/**
-	This function performs probability calculations on sentences.
-	Good-Turing smoothed probabilities to the file evaluated_sentences.txt.
+	*
 	**/
-	
-	/**
-	public void calculateSmoothedPos(){
-		ArrayList<String[]> nextLine = this.manager.readNextSentence();
-		
-		while(nextLine.size() > 15){
-			nextLine = this.manager.readNextSentence();
-		}
-		int size = nextLine.size();
-		
-		NGram ngram = new NGram("WSJ02-21.pos");
-		Map<String, Map<String, Integer>> wordsTagsCount = ngram.createWordsDictionaryWithPosTagsAndCount();
-		
-		HashMap<String, Integer> posNGrams = nGrams[0].computeNGramsPosTag();
-		System.out.println(posNGrams.size());
-		
-		HashMap<String, Integer> posNMinusOneGrams = nGrams[1].computeNGramsPosTag();
-		System.out.println(posNMinusOneGrams.size());
-		
-		Smoothing smooth = new Smoothing();
-		Map<String, Double> goodTuringPossilitiesOfNGramPos = smooth.goodTuringPos(posNGrams,
-														posNMinusOneGrams, this.k, nGrams[0].getTotalSentences());
-		
-		NGram posTagDictionaryCreator = new NGram("WSJ02-21.pos");
-		Map<String, Map<String, Integer>> posTagDictionary = posTagDictionaryCreator.createPosTagDictionaryWithWordsAndCount();
-		HashMap<String, HashMap<String, Double>> smoothedPosTagDictionary = smooth.goodTuringPosTagsCalcPossibilities(posTagDictionary);
-		HashMap<String, HashMap<String, Double>> smoothedPosTagDictionaryProbabilities = calculatePosTagDictionaryProbabilities(smoothedPosTagDictionary);
-		int startSymbolCount = this.n-1;
-		
-		//while(nextLine != null){
-			System.out.println(Arrays.deepToString(nextLine.toArray()));
-			//double probabilityGoodTuring = 1;
-			String[] tags = new String[size];
-			String[] words = new String[size +(startSymbolCount)];
-			
-			double viterbiPathProbability = 1;
-			
-			
-			
-			for(int i = 0; i < (size + startSymbolCount); i++){
-				if(i < startSymbolCount){
-					words[i] = "<s> ";
-				}else{
-				words[i] = nextLine.get(i-(startSymbolCount))[0];
-				}
-				//tags[i] = nextLine.get(i)[1];
-			}
-			System.out.println(Arrays.toString(words));
-			
-			String[] nGramsOfSentence = nGrams[0].createNGramsOfSentence(words);
-			System.out.println(Arrays.toString(nGramsOfSentence));
-			
-			for(String nGram : nGramsOfSentence){
-				
-			
-			
-			}
-			
-			
-			
-			//for
-				//if word is not known in train set option.
-				//Get most likely tag of word & put in tags[i].
-				Map<String, Integer> tagsCount= wordsTagsCount.get(words[i]);
-				System.out.println(words[i] + " --- "+ Arrays.toString(tagsCount.entrySet().toArray()));
-		
-				System.out.println(tagsCount.size());
-				if(tagsCount.size()==0){
-					
-				}
-				tags[i] = findBestTag(tagsCount);
-			
-			//}
-			
-			
-
-
-			for(int i = 0; i < (size - this.n); i++){
-				//calculate probability for the tag sequence.
-				String sequence = tags[i];
-				for(int j = 1; j < this.n; j++){
-					sequence = sequence + " " + tags[i + j];
-				}
-				probabilityGoodTuring *= goodTuringPossilitiesOfNGramPos.get(sequence);
-			}
-
-			
-			
-			
-			
-
-			String posSeq = tags[0];
-			String sentence = words[0];
-			
-			for(int i = 1; i < size; i++){
-				posSeq = posSeq + " " + tags[i];
-				sentence = sentence + " " + words[i];
-			}
-			//System.out.println(sentence);
-			//System.out.println(posSeq);
-			//System.out.println("Probibility of the Sentence is " + probabilityGoodTuring);
-			//this.manager.writeToFile("The most likely PoS tag sequence for sentence: '" + sentence + "' is: '" + posSeq + "'.");
-			//this.manager.writeToFile("The probability for this sentence is: " + probabilityGoodTuring);
-			
-			nextLine = this.manager.readNextSentence();
-			while(nextLine.size() > 15){
-				nextLine = this.manager.readNextSentence();
-			}
-			size = nextLine.size();
-		//}
-		
-		
-// 		System.out.println("Percentage of zeros in unsmoothed:" + 100*(unSmoothedZeroCounter/sentenceCounter));
-// 		System.out.println("Percentage of zeros in Good Turing Smoothing:" + 100*(goodTuringZeroCounter/sentenceCounter));
-// 		
-		try{
-			this.manager.terminate();
-		}catch(Exception e){
-			System.out.println(e);
-		}
-	}
-	**/
-	public void creatPosTagSequences(){
+	public void createPosTagSequences(){
 		int maxLineLength = 15;
 		NGram trigrams = new NGram("WSJ02-21.pos", 3);
 		NGram bigrams = new NGram("WSJ02-21.pos", 2);
 		NGram dictionaryCreator = new NGram("WSJ02-21.pos");
 		Smoothing smoother = new Smoothing();
+		HashMap<ArrayList<String[]>, ArrayList<String[]>> results = new HashMap<ArrayList<String[]>, ArrayList<String[]>>();
 		HashMap<String, Integer> trigramsOfPosTags= trigrams.computeNGramsPosTag();
 		HashMap<String, Integer> bigramsOfPosTags= bigrams.computeNGramsPosTag();
 		int totalSentencesInTrainingCorpus = trigrams.getTotalSentences();
@@ -372,9 +250,12 @@ public class ProbabilityCalculator{
 		}
 		
 		//System.out.println(Arrays.deepToString(nextLine.toArray()));
- 
+		try{
+			FileWriter fstream = new FileWriter("resultsOfTagger.txt");
+			BufferedWriter out = new BufferedWriter(fstream);
+		
 		while(nextLine != null){
-			System.out.println("Tagging sentence: " + Arrays.deepToString(nextLine.toArray()));
+			//System.out.println("Tagging sentence: " + Arrays.deepToString(nextLine.toArray()));
 			if(nextLine.size() == 0)
 			{
 				nextLine = this.manager.readNextSentence();
@@ -391,10 +272,12 @@ public class ProbabilityCalculator{
 			sentence = sentence.substring(0, sentence.length()-1);
 			
 			String[] sentenceTrigrams = dictionaryCreator.createNGramsOfSentence(sentence.split(" "), 3);
-		
+			
 			ArrayList<String[]> sentenceTagged = createPosTagSequenceForSentence(sentenceTrigrams, postagTrigramPossibilities, posTagDictionaryWithWordsAndPoss);
-			System.out.println("Result of Tagging: " + Arrays.deepToString(sentenceTagged.toArray()));
-			System.out.println("\n \n \n");
+			//System.out.println("Result of Tagging: " + Arrays.deepToString(sentenceTagged.toArray()));
+			//System.out.println("\n \n \n");
+			results.put(nextLine, sentenceTagged);
+			out.write("O - " + Arrays.deepToString(nextLine.toArray())+ "\n" + "T - " + Arrays.deepToString(sentenceTagged.toArray()) + "\n\n");
 			nextLine = this.manager.readNextSentence();
 			
 			while(nextLine != null && nextLine.size() > maxLineLength){
@@ -402,8 +285,13 @@ public class ProbabilityCalculator{
 			}
 			
 		}
+
+			out.close();
+		} catch (Exception e){
+			System.err.println("Error: " + e.getMessage());
+		}
 		
-	
+		correctnessOfTaggerForSentence(results);
 	}
 	
 	public ArrayList<String[]> createPosTagSequenceForSentence(String[] sentenceTrigrams, HashMap<String, Double> postagTrigramsPoss, HashMap<String, HashMap<String, Double>> posTagDictionaryWithWordsAndPoss){
@@ -413,9 +301,6 @@ public class ProbabilityCalculator{
 		String bestTag = "";
 		String bigram = "";
 		String currentTag = "";
-		
-		
-		
 		
 		ArrayList<String[]> taggedSentence = new ArrayList<String[]>();
 		String[] startSentence = sentenceTrigrams[0].split(" ");
@@ -517,11 +402,125 @@ public class ProbabilityCalculator{
 			//System.out.println(intermediateViterbiPossMap.size());
 		
 		}
-		String[] endresult = {"Possibility for this postag sequence", "" + viterbiPoss};
-		taggedSentence.add(endresult);
+		//String[] endresult = {"Possibility for this postag sequence", "" + viterbiPoss};
+		//taggedSentence.add(endresult);
 		//System.out.println("The final tagged sentence: " + Arrays.deepToString(taggedSentence.toArray()));
 		return taggedSentence;
 		
+	}
+	
+	public void correctnessOfTaggerForSentence(HashMap<ArrayList<String[]>, ArrayList<String[]>> results){
+		HashMap<String, Integer> truePositives = new HashMap<String, Integer>();
+		HashMap<String, Integer> falsePositives = new HashMap<String, Integer>();
+		HashMap<String, Integer> trueNegatives = new HashMap<String, Integer>();
+		HashMap<String, Integer> falseNegatives = new HashMap<String, Integer>();
+		
+		for(Map.Entry<ArrayList<String[]>,ArrayList<String[]>> entry : results.entrySet()){
+			ArrayList<String[]> originalSentence = entry.getKey();
+			ArrayList<String[]> taggedByTaggerSentence = entry.getValue();
+			int index = 0;
+			for(String[] wordAndTag : originalSentence) {
+				//als correct getagged
+				if (wordAndTag[1].equals(taggedByTaggerSentence.get(index)[1])){
+					if(truePositives.containsKey(wordAndTag[1])){
+						int truePos = truePositives.get(wordAndTag[1]);
+						truePositives.put(wordAndTag[1], truePos+1);
+					} else {
+						truePositives.put(wordAndTag[1], 1);
+					}
+				} else {
+					if(falseNegatives.containsKey(wordAndTag[1])){
+						int falseNeg = falseNegatives.get(wordAndTag[1]);
+						falseNegatives.put(wordAndTag[1], falseNeg+1);
+					} else {
+						falseNegatives.put(wordAndTag[1], 1);
+					}
+				}
+				index++;
+			}
+			index = 0;
+			for(String[] wordAndTagByTagger : taggedByTaggerSentence){
+				if(!wordAndTagByTagger[1].equals(originalSentence.get(index)[1])){
+					if(falsePositives.containsKey(wordAndTagByTagger[1])){
+						int falsePos = falsePositives.get(wordAndTagByTagger[1]);
+						falsePositives.put(originalSentence.get(index)[1], falsePos+1);
+					} else {
+						falsePositives.put(originalSentence.get(index)[1], 1);
+					}
+				}
+				index++;
+			}
+		}
+		
+		for(String pos : truePositives.keySet()){
+			int trueNegativeValue = totalCountFromHashMapExclude(truePositives, pos);
+			trueNegatives.put(pos, trueNegativeValue);
+		}
+		
+		//System.out.println("True Positives: \n"+ truePositives + "\n\n");
+		//System.out.println("False Positives: \n" + falsePositives + "\n\n");
+		//System.out.println("True Negatives: \n" + trueNegatives + "\n\n");
+		//System.out.println("False Negatives: \n" + falseNegatives + "\n\n");
+		
+		precision(truePositives, falsePositives);
+		recall(truePositives, falseNegatives);
+	}
+	
+	public void precision(HashMap<String, Integer> truePositives, HashMap<String, Integer> falsePositives){
+		try{
+			FileWriter fstream = new FileWriter("precision.txt");
+			BufferedWriter out = new BufferedWriter(fstream);
+			out.write("======Precision Values per Tag======\n");
+		System.out.println("======Precision Values per Tag======\n");
+		
+		for(Map.Entry<String, Integer> entry : truePositives.entrySet()){
+			String tag = entry.getKey();
+			int falsePositivesValue = 0;
+			if(falsePositives.containsKey(tag)){
+				falsePositivesValue = falsePositives.get(tag);
+			}
+			double precision = (double) entry.getValue() / (double)(entry.getValue() + falsePositivesValue);
+			System.out.println(tag + " --- " + precision*100 + "%");
+			out.write(tag + " --- " + precision*100 + "%\n");
+		}
+		System.out.println("\n\n");
+		out.close();
+		} catch (Exception e){
+			System.err.println("Error: " + e.getMessage());
+		}
+	}
+	
+	public void recall(HashMap<String, Integer> truePositives, HashMap<String, Integer> falseNegatives){
+		  try{
+			FileWriter fstream = new FileWriter("recall.txt");
+			BufferedWriter out = new BufferedWriter(fstream);
+			out.write("======Recall Values per Tag======\n");
+		System.out.println("======Recall Values per Tag======\n");
+		for(Map.Entry<String, Integer> entry : truePositives.entrySet()){
+			String tag = entry.getKey();
+			int falseNegativesValue = 0;
+			if(falseNegatives.containsKey(tag)){
+				falseNegativesValue = falseNegatives.get(tag);
+			}
+			double recall = (double) entry.getValue() / (double)(entry.getValue() + falseNegativesValue);
+			System.out.println(tag + " --- " + recall*100 + "%");
+			out.write(tag + " --- " + recall*100 + "%\n");
+		}
+		out.close();
+		} catch (Exception e){
+			System.err.println("Error: " + e.getMessage());
+		}
+	}
+	
+	public int totalCountFromHashMapExclude(HashMap<String, Integer> map, String key){
+		int total = 0;
+		
+		for(String entryKey : map.keySet()){
+			if(!entryKey.equals(key)){
+				total += map.get(key);
+			}
+		}
+		return total;
 	}
 	
 
