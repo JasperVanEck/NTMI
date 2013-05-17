@@ -97,7 +97,7 @@ public class Smoothing {
 		
 		int[] counts = getNCounts2(posNGrams, k);
 		double[] adjustedCounts = getAdjustedCounts(counts, posNGrams.size(), posNMinusOneGrams.size(), k);
-		System.out.println(Arrays.toString(adjustedCounts));
+		//System.out.println(Arrays.toString(adjustedCounts));
 		HashMap<String, Double> nGramsGoodTuringPoss = new HashMap<String, Double>();
 		
 		for(Map.Entry<String,Integer> entry : posNGrams.entrySet()){
