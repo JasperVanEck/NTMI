@@ -351,6 +351,7 @@ public class ProbabilityCalculator{
 	}
 	**/
 	public void creatPosTagSequences(){
+		int maxLineLength = 15;
 		NGram trigrams = new NGram("WSJ02-21.pos", 3);
 		NGram bigrams = new NGram("WSJ02-21.pos", 2);
 		NGram dictionaryCreator = new NGram("WSJ02-21.pos");
@@ -360,18 +361,48 @@ public class ProbabilityCalculator{
 		int totalSentencesInTrainingCorpus = trigrams.getTotalSentences();
 		HashMap<String, Double> postagTrigramPossibilities = smoother.goodTuringPos(trigramsOfPosTags, bigramsOfPosTags, this.k, totalSentencesInTrainingCorpus);
 		
-		
-		
-		String sentence = "<s> <s> Floris want";
-		String[] sentenceTrigrams = dictionaryCreator.createNGramsOfSentence(sentence.split(" "), 3);
-		
 		Map<String, Map<String, Integer>> postagDictionary = dictionaryCreator.createPosTagDictionaryWithWordsAndCount();
-		
-		//System.out.println(postagDictionary.keySet());
-		
 		HashMap<String, HashMap<String, Double>> posTagDictionaryWithWordsAndPoss = smoother.goodTuringPosTagsCalcPossibilities(postagDictionary);
 		
-		ArrayList<String[]> sentenceTagged = createPosTagSequenceForSentence(sentenceTrigrams, postagTrigramPossibilities, posTagDictionaryWithWordsAndPoss);
+		ArrayList<String[]> nextLine = this.manager.readNextSentence();
+		
+		
+		while(nextLine.size() > maxLineLength){
+			nextLine = this.manager.readNextSentence();
+		}
+		
+		//System.out.println(Arrays.deepToString(nextLine.toArray()));
+ 
+		while(nextLine != null){
+			System.out.println("Tagging sentence: " + Arrays.deepToString(nextLine.toArray()));
+			if(nextLine.size() == 0)
+			{
+				nextLine = this.manager.readNextSentence();
+				while(nextLine.size() > maxLineLength){
+					nextLine = this.manager.readNextSentence();
+				
+				}
+				continue;
+			}
+			String sentence = "<s> <s> ";
+			for(String[] elem : nextLine){
+				sentence += elem[0] + " ";
+			}
+			sentence = sentence.substring(0, sentence.length()-1);
+			
+			String[] sentenceTrigrams = dictionaryCreator.createNGramsOfSentence(sentence.split(" "), 3);
+		
+			ArrayList<String[]> sentenceTagged = createPosTagSequenceForSentence(sentenceTrigrams, postagTrigramPossibilities, posTagDictionaryWithWordsAndPoss);
+			System.out.println("Result of Tagging: " + Arrays.deepToString(sentenceTagged.toArray()));
+			System.out.println("\n \n \n");
+			nextLine = this.manager.readNextSentence();
+			
+			while(nextLine != null && nextLine.size() > maxLineLength){
+				nextLine = this.manager.readNextSentence();
+			}
+			
+		}
+		
 	
 	}
 	
@@ -396,15 +427,20 @@ public class ProbabilityCalculator{
 			HashMap<String, Double> intermediateViterbiPossMap = new HashMap<String, Double>();
 		
 		
-			System.out.println(trigram);
+			//System.out.println(trigram);
 			postagsWithPossGivenPredecessors.clear();
 			wordGivenPostagPossibilities.clear();
 			intermediateViterbiPossMap.clear();
 			
+			//System.out.println("======= Checking Tag For " + trigram + "=======");
+			//System.out.println(postagsWithPossGivenPredecessors);
+			//System.out.println(wordGivenPostagPossibilities);
+			//System.out.println(intermediateViterbiPossMap);
+			
 			String[] trigramArray = trigram.split(" ");
 			String wordToTag = trigramArray[2];
 			//System.out.println(Arrays.toString(trigramArray));
-			System.out.println(Arrays.toString(predecessorBigram));
+			//System.out.println(Arrays.toString(predecessorBigram));
 			/**
 			Deze for loop haalt alle mogelijke postags op gegeven de twee voorgangers, en de kans daarop. En stopt deze in de hashmap postagsWithPossGivenPredecessors.
 			**/
@@ -420,7 +456,7 @@ public class ProbabilityCalculator{
 				}
 				
 			}
-			System.out.println("Resultaat eerste loop:" + postagsWithPossGivenPredecessors);
+			//System.out.println("Resultaat eerste loop:" + postagsWithPossGivenPredecessors);
 			
 			
 			/**
@@ -430,21 +466,21 @@ public class ProbabilityCalculator{
 			
 			for(Map.Entry<String, Double> postagEntry : postagsWithPossGivenPredecessors.entrySet()){
 				currentTag = postagEntry.getKey();
-				System.out.println(currentTag);
+				//System.out.println(currentTag);
 				Map<String, Double> wordsAndPossibilityForTag = posTagDictionaryWithWordsAndPoss.get(currentTag);
 				//System.out.println(wordsAndPossibilityForTag);
 				if(wordsAndPossibilityForTag.containsKey(wordToTag)){
-					System.out.println("IF - Current word: " + wordToTag + " --- " + wordsAndPossibilityForTag.get(wordToTag));
+					//System.out.println("IF - Current word: " + wordToTag + " --- " + wordsAndPossibilityForTag.get(wordToTag));
 					wordGivenPostagPossibilities.put(currentTag, wordsAndPossibilityForTag.get(wordToTag));					
 				}else{
-					System.out.println("ELSE - Current word: " + wordToTag + " --- " + wordsAndPossibilityForTag.get("0Count"));
+					//System.out.println("ELSE - Current word: " + wordToTag + " --- " + wordsAndPossibilityForTag.get("0Count"));
 					wordGivenPostagPossibilities.put(currentTag, wordsAndPossibilityForTag.get("0Count"));					
 				}
 
 			}
 			//System.out.println(posTagDictionaryWithWordsAndPoss);
 			
-			System.out.println("\n Resultaat tweede loop:" + wordGivenPostagPossibilities);
+			//System.out.println("\n Resultaat tweede loop:" + wordGivenPostagPossibilities);
 			
 			/**
 			Deze loop haalt de kansen uit de vorige loops en vermenigvuldigt deze met elkaar.
@@ -457,7 +493,7 @@ public class ProbabilityCalculator{
 				intermediateViterbiPossMap.put(tag, intermediateViterbiPoss);
 			}
 			
-			System.out.println("\n Resultaat derde loop: " + intermediateViterbiPossMap);
+			//System.out.println("\n Resultaat derde loop: " + intermediateViterbiPossMap);
 			
 			/**
 			Deze loop selecteert de hoogste waarde uit het product van de vorige loop.
@@ -476,14 +512,14 @@ public class ProbabilityCalculator{
 			bestValue = 0;
 			bestTag = "";
 			
-			System.out.println(postagsWithPossGivenPredecessors.size());
-			System.out.println(wordGivenPostagPossibilities.size());
-			System.out.println(intermediateViterbiPossMap.size());
+			//System.out.println(postagsWithPossGivenPredecessors.size());
+			//System.out.println(wordGivenPostagPossibilities.size());
+			//System.out.println(intermediateViterbiPossMap.size());
 		
 		}
-		System.out.println("The final tagged sentence: " + Arrays.deepToString(taggedSentence.toArray()));
 		String[] endresult = {"Possibility for this postag sequence", "" + viterbiPoss};
 		taggedSentence.add(endresult);
+		//System.out.println("The final tagged sentence: " + Arrays.deepToString(taggedSentence.toArray()));
 		return taggedSentence;
 		
 	}

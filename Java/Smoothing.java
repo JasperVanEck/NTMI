@@ -169,17 +169,17 @@ public class Smoothing {
 			//System.out.println(elem.getKey());
 			for(Map.Entry<String, Integer> elem2 : elem.getValue().entrySet()) {
 				newValue = (double)elem2.getValue();
+				totalWordCountPerTag += newValue;
 				
 				if(newValue == 1){
 					newValue = 0.5;
 					nOneCount++;
 				}
-				totalWordCountPerTag += newValue;
 				wordsWithNewCount.put(elem2.getKey(),newValue);
 				
 				//System.out.println(elem2.getKey() + " --- " + newValue);
 			}
-			double missingCount = 0.5 * nOneCount;
+			double missingCount = 0.5 * (nOneCount/totalWordCountPerTag);
 			wordsWithNewCount.put("0Count", missingCount);
 			//System.out.println(wordsWithNewCount);
 			for(Map.Entry<String, Double> elem2 : wordsWithNewCount.entrySet()){
