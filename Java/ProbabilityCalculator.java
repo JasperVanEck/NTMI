@@ -9,11 +9,6 @@ public class ProbabilityCalculator{
 	private FileManager manager;
 	private int n,k;
 	private String trainFile, testFile;
-
-	public static void main(String[] args){
-		ProbabilityCalculator test = new ProbabilityCalculator("WSJ23.pos", "WSJ02-21.pos", 3, 4);
-		test.createPosTagSequences();
-	}
 	
 	/**
 	* Constructor for probability Calculator, sets all variables that are used in the create pos tag sequences
