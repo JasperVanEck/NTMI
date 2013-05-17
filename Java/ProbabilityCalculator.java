@@ -250,7 +250,10 @@ public class ProbabilityCalculator{
 		}
 		
 		//System.out.println(Arrays.deepToString(nextLine.toArray()));
- 
+		try{
+			FileWriter fstream = new FileWriter("resultsOfTagger.txt");
+			BufferedWriter out = new BufferedWriter(fstream);
+		
 		while(nextLine != null){
 			//System.out.println("Tagging sentence: " + Arrays.deepToString(nextLine.toArray()));
 			if(nextLine.size() == 0)
@@ -274,6 +277,7 @@ public class ProbabilityCalculator{
 			//System.out.println("Result of Tagging: " + Arrays.deepToString(sentenceTagged.toArray()));
 			//System.out.println("\n \n \n");
 			results.put(nextLine, sentenceTagged);
+			out.write("O - " + Arrays.deepToString(nextLine.toArray())+ "\n" + "T - " + Arrays.deepToString(sentenceTagged.toArray()) + "\n\n");
 			nextLine = this.manager.readNextSentence();
 			
 			while(nextLine != null && nextLine.size() > maxLineLength){
@@ -281,6 +285,12 @@ public class ProbabilityCalculator{
 			}
 			
 		}
+
+			out.close();
+		} catch (Exception e){
+			System.err.println("Error: " + e.getMessage());
+		}
+		
 		correctnessOfTaggerForSentence(results);
 	}
 	
@@ -457,7 +467,12 @@ public class ProbabilityCalculator{
 	}
 	
 	public void precision(HashMap<String, Integer> truePositives, HashMap<String, Integer> falsePositives){
+		try{
+			FileWriter fstream = new FileWriter("precision.txt");
+			BufferedWriter out = new BufferedWriter(fstream);
+			out.write("======Precision Values per Tag======\n");
 		System.out.println("======Precision Values per Tag======\n");
+		
 		for(Map.Entry<String, Integer> entry : truePositives.entrySet()){
 			String tag = entry.getKey();
 			int falsePositivesValue = 0;
@@ -466,11 +481,20 @@ public class ProbabilityCalculator{
 			}
 			double precision = (double) entry.getValue() / (double)(entry.getValue() + falsePositivesValue);
 			System.out.println(tag + " --- " + precision*100 + "%");
+			out.write(tag + " --- " + precision*100 + "%\n");
 		}
 		System.out.println("\n\n");
+		out.close();
+		} catch (Exception e){
+			System.err.println("Error: " + e.getMessage());
+		}
 	}
 	
 	public void recall(HashMap<String, Integer> truePositives, HashMap<String, Integer> falseNegatives){
+		  try{
+			FileWriter fstream = new FileWriter("recall.txt");
+			BufferedWriter out = new BufferedWriter(fstream);
+			out.write("======Recall Values per Tag======\n");
 		System.out.println("======Recall Values per Tag======\n");
 		for(Map.Entry<String, Integer> entry : truePositives.entrySet()){
 			String tag = entry.getKey();
@@ -480,6 +504,11 @@ public class ProbabilityCalculator{
 			}
 			double recall = (double) entry.getValue() / (double)(entry.getValue() + falseNegativesValue);
 			System.out.println(tag + " --- " + recall*100 + "%");
+			out.write(tag + " --- " + recall*100 + "%\n");
+		}
+		out.close();
+		} catch (Exception e){
+			System.err.println("Error: " + e.getMessage());
 		}
 	}
 	
