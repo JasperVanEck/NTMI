@@ -14,7 +14,6 @@ public class NGram{
 	private HashMap<String, Integer> mapWords = new HashMap<String, Integer>();
 	private HashMap<String, Integer> completeTagCount = new HashMap<String, Integer>();
 	private Map<String, Map<String, Integer>> wordsWithPosTagCount = new HashMap<String, Map<String, Integer>>();
-	private TreeMap<String, Integer> sortedMap;
 	private FileManager manager;
 	private int nGramSize;
 	private int m;
@@ -145,6 +144,10 @@ public class NGram{
 
 	}
 	
+	/**
+	* createNGramsOfSentence(String[] inputSentence, int n) maakt n-grams aan de hand van inputSentence en n. De n-grams worden gereturned
+	* als String[].
+	**/	
 	public String[] createNGramsOfSentence(String[] inputSentence, int n){
 		int arraySize = inputSentence.length-(n-1);
 		String[] result = new String[arraySize];
@@ -286,59 +289,15 @@ public class NGram{
 	}
 
 	/*
-	Sorteert de hashMap map en zet deze in TreeMap sortedMap. 
+	* getN() returned the n, van welke n-grams er gemaakt zijn.
 	*/
-	public void sortMap(){
-		
-		FrequencyComparator comparator = new FrequencyComparator(this.map);
-		sortedMap = new TreeMap<String, Integer>(comparator);
-		sortedMap.putAll(this.map);
-	
-	}
-	
 	public int getN(){
 		return this.nGramSize;
 	}
 
 	/*
-	Print de m meest voorkomende NGrams uit.
+	* terminate() zorgt ervoor dat de FileManager wordt afgesloten.
 	*/
-	public void printTopFrequencies(){
-		int i = 0;
-		Iterator entries = sortedMap.entrySet().iterator();
-		while(i < m && entries.hasNext()){
-			Map.Entry nGram = (Map.Entry) entries.next();
-			System.out.println(nGram.getKey() + " - " + nGram.getValue());
-			i++;
-		}
-	}
-	
-	/*
-	Print de totale som van alle frequenties.
-	*/
-	public void printSumFrequencies(){
-		Integer sum = 0;
-		for(Map.Entry<String, Integer> entry : sortedMap.entrySet()){
-			sum = sum + entry.getValue();
-		}
-		System.out.println("Total of all frequencies: " + sum);
-	}
-
-	public void writeTopFrequencies(){
-		int i = 0;
-		Iterator entries = sortedMap.entrySet().iterator();
-		while(i < 25 && entries.hasNext()){
-			Map.Entry nGram = (Map.Entry) entries.next();
-			this.manager.writeToFile((String) nGram.getKey());
-			i++;
-		}
-		try{
-			this.manager.terminate();
-		}catch(IOException e){
-			System.out.println("Couldn't close file");
-		}
-	}
-
 	public void terminate(){
 		try{
 			this.manager.terminate();
@@ -347,26 +306,37 @@ public class NGram{
 		}
 	}
 	
+	/*
+	* getValue(String key) returned the count die bij key hoort.
+	*/
 	public int getValue(String key){
 		return this.map.get(key);			
 	}
 	
+	/*
+	* getTotalSentences() returned hoeveel sentences er zijn gebruikt voor de n-grams
+	*/
 	public int getTotalSentences(){
 		return this.sentencesCount;
 	}
-	
-	public TreeMap<String, Integer> getSortedMap(){
-		return this.sortedMap;
-	}
-	
+
+	/*
+	* getHashMap() returned de HashMap met daarin de n-grams en de bij behorende counts.
+	*/
 	public HashMap<String, Integer> getHashMap(){
 		return this.map;
 	}
 	
+	/*
+	* getStartSymbolCount() returned de hoeveelheid start symbols.
+	*/
 	public double getStartSymbolCount(){
 		return startSymbolCount;
 	}
 	
+	/*
+	* getBigN() returned the hoeveelheid n-grams in the hashmap.
+	*/
 	public double getBigN(){
 		double bigN = 0;
 		for (Map.Entry<String,Integer> entry : sortedMap.entrySet()){
