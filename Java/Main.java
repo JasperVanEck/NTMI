@@ -16,6 +16,6 @@ public class Main{
 
 		ProbabilityCalculator probCalc = new ProbabilityCalculator("WSJ23.pos", "WSJ02-21.pos", 3, 4);
 		//probCalc.calculateSmoothedPos();
-		probCalc.creatPosTagSequences();
+		//probCalc.creatPosTagSequences();
 	}
 }

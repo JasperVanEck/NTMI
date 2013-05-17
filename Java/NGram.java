@@ -339,7 +339,7 @@ public class NGram{
 	*/
 	public double getBigN(){
 		double bigN = 0;
-		for (Map.Entry<String,Integer> entry : sortedMap.entrySet()){
+		for (Map.Entry<String,Integer> entry : this.map.entrySet()){
 			bigN += entry.getValue();
 		}
 		
