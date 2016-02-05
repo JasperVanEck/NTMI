@@ -140,7 +140,7 @@ public class ProbabilityCalculator{
 					//System.out.println("sentence is: " + sentence);
 					
 					
-					double freq2 = 625850//this.nGrams[0].countPrefix(shortSentence);
+					double freq2 = 625850;//this.nGrams[0].countPrefix(shortSentence)
 					System.out.printf("Freq2 voor de prefix %s is %f \n", shortSentence, freq2);
 					double freq1 = 1;
 					
